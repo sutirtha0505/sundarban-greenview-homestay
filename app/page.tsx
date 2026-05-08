@@ -1,6 +1,7 @@
-import HeroPage from "@/components/Hero";
+import HeroPage from "@/components/hero";
 import Navbar from "@/components/Navbar";
-import Trips from "@/components/Trips";
+import Trips from "@/components/trips";
+import Rooms from "@/components/rooms";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <Navbar />
       <HeroPage />
       <Trips />
+      <Rooms />
     </main>
   );
 }
