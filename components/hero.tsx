@@ -44,7 +44,7 @@ export default function HeroPage() {
         const elementOffset = activeElement.offsetLeft;
         const elementWidth = activeElement.clientWidth;
         const scrollPosition = elementOffset - (containerWidth / 2) + (elementWidth / 2);
-        
+
         container.scrollTo({
           left: scrollPosition,
           behavior: 'smooth'
@@ -75,9 +75,8 @@ export default function HeroPage() {
           alt={`Sundarban Hero Image ${index + 1}`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={`object-cover transition-opacity duration-1000 ${
-            index === currentImageIndex ? "opacity-100" : "opacity-0"
-          }`}
+          className={`object-cover transition-opacity duration-1000 ${index === currentImageIndex ? "opacity-100" : "opacity-0"
+            }`}
           priority={index === 0}
         />
       ))}
@@ -95,7 +94,7 @@ export default function HeroPage() {
             Escape. <span className="text-[#C5FE4E]">Relax.</span> Mangroves.
           </h1>
           <p className="max-w-5xl text-base text-gray-200 sm:text-lg lg:text-xl leading-relaxed">
-            Discover the untamed beauty of the Sundarbans, the world&apos;s largest mangrove forest. Sundarban Greenview Homestay offers an immersive retreat where nature meets comfort. Explore winding rivers, encounter diverse wildlife, and experience the serene magic of this UNESCO World Heritage Site. Disconnect from the everyday and reconnect with the wild.
+            Escape into the untouched wilderness of the Sundarbans and experience a destination where nature, tranquility, and authentic village hospitality come together in perfect harmony. Sundarban Greenview Homestay offers a peaceful retreat in the heart of the world&apos;s largest mangrove forest, surrounded by serene rivers, lush greenery, and breathtaking natural beauty. Explore winding waterways on traditional boat rides, witness mesmerizing sunsets over the delta, and discover the rich biodiversity that makes the Sundarbans one of the most extraordinary ecosystems on Earth. From exotic birds and spotted deer to the legendary Royal Bengal Tiger, every journey through the forest carries the excitement of adventure and discovery. Beyond the wilderness, immerse yourself in the warmth of local culture, enjoy freshly prepared Bengali cuisine, and experience the calm simplicity of life far away from crowded cities and constant noise. Whether you seek relaxation, wildlife exploration, photography, or meaningful moments with family and friends, Sundarban Greenview Homestay creates an unforgettable escape where every breeze, river, and sunrise reconnects you with the beauty of the natural world.
           </p>
         </div>
 
@@ -120,14 +119,14 @@ export default function HeroPage() {
 
         {/* Room Cards Carousel */}
         <div className="absolute bottom-10 right-10 sm:right-20 lg:right-32 z-20 flex items-center gap-2 max-w-[calc(100vw-2rem)] sm:max-w-[60vw] lg:max-w-[50vw]">
-          <button 
+          <button
             onClick={scrollLeft}
             className="hidden sm:flex items-center justify-center h-10 w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
-          
-          <div 
+
+          <div
             ref={scrollContainerRef}
             className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
@@ -135,9 +134,8 @@ export default function HeroPage() {
               <button
                 key={src}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative h-28 w-40 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-48 group transition-all duration-300 snap-center ${
-                  index === currentImageIndex ? "border-[3px] border-[#CEF15D]" : "border-[3px] border-transparent"
-                }`}
+                className={`relative h-28 w-40 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-48 group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#CEF15D]" : "border-[3px] border-transparent"
+                  }`}
               >
                 <Image
                   src={src}
@@ -150,7 +148,7 @@ export default function HeroPage() {
             ))}
           </div>
 
-          <button 
+          <button
             onClick={scrollRight}
             className="hidden sm:flex items-center justify-center h-10 w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
           >
