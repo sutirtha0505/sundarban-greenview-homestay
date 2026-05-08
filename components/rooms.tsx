@@ -91,7 +91,6 @@ type Room = (typeof budgetRooms)[0];
 function RoomCard({
   room,
   slot,
-  animKey,
   onSelect,
 }: {
   room: Room;

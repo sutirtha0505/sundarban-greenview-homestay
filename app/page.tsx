@@ -1,7 +1,7 @@
-import HeroPage from "@/components/hero";
+import HeroPage from "@/components/Hero";
 import Navbar from "@/components/Navbar";
-import Trips from "@/components/trips";
-import Rooms from "@/components/rooms";
+import Trips from "@/components/Trips";
+import Rooms from "@/components/Rooms";
 
 export default function Home() {
   return (

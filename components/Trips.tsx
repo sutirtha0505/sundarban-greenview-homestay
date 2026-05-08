@@ -21,7 +21,7 @@ const tripsData = [
     rating: "4.5",
     reviews: "Very Good (2.9k Reviews)",
     price: "₹ 4,675",
-    buttonType: "solid"
+    buttonType: "outline"
   },
   {
     id: 3,
@@ -100,7 +100,7 @@ export default function Trips() {
                 </div>
 
                 <button 
-                  className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#71A129] ${
+                  className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#71A129] cursor-pointer ${
                     trip.buttonType === 'solid' 
                       ? 'bg-[#71A129] text-[#FFFFFF] hover:bg-[#5b851f]' 
                       : 'bg-[#FFFFFF] text-[#71A129] hover:bg-[#71A129] hover:text-[#FFFFFF] group'
