@@ -1,8 +1,16 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Gloock } from "next/font/google";
+import gsap from "gsap";
+import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
+}
 
 const gloock = Gloock({ weight: "400", subsets: ["latin"] });
 
@@ -88,89 +96,56 @@ const premiumRooms = [
 type Tab = "budget" | "premium";
 type Room = (typeof budgetRooms)[0];
 
+/* ─────────────────────────────────────────────
+   Card Component
+───────────────────────────────────────────── */
 function RoomCard({
   room,
-  slot,
-  onSelect,
+  isActive,
 }: {
   room: Room;
-  slot: "left" | "center" | "right";
-  animKey: number;
-  onSelect?: () => void;
+  isActive: boolean;
 }) {
-  const isCenter = slot === "center";
-  const [hovered, setHovered] = useState(false);
-
-  const isActive = isCenter || hovered;
-
-  const animationName =
-    slot === "left"
-      ? "appearFromLeft"
-      : slot === "right"
-        ? "appearFromRight"
-        : "appearCenter";
-
-  const bendTransform = isCenter
-    ? "rotate(0deg) scale(1)"
-    : slot === "left"
-      ? "rotate(-5deg) scale(0.92)"
-      : "rotate(5deg) scale(0.92)";
-
   return (
     <div
-      onClick={!isCenter ? onSelect : undefined}
-      onMouseEnter={() => !isCenter && setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       style={{
-        borderRadius: "20px",
-        border: isActive ? "2px solid #6DA003" : "1.5px solid rgba(109,160,3,0.35)",
+        borderRadius: "32px",
+        border: "2px solid #6DA003",
         background: "#ffffff",
         overflow: "hidden",
         width: "100%",
-        height: "480px",
+        height: "490px",
         display: "flex",
         flexDirection: "column",
-        transformOrigin: "bottom center",
-        transform: bendTransform,
-        opacity: isActive ? 1 : 0.82,
         boxShadow: isActive
           ? "0 24px 60px rgba(0,0,0,0.18)"
           : "0 12px 32px rgba(0,0,0,0.10)",
-        cursor: !isCenter ? "pointer" : "default",
-        transition: "border 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease",
-        animation: `${animationName} 0.5s cubic-bezier(0.25,0.46,0.45,0.94) both`,
+        transition: "box-shadow 0.25s ease",
       }}
+      className="p-3"
     >
       {/* Image */}
-      <div className="relative w-full" style={{ height: "220px", flexShrink: 0 }}>
+      <div className="relative w-full" style={{ height: "240px", flexShrink: 0 }}>
         <Image
           src={room.image}
           alt={room.title}
           fill
           sizes="(max-width: 640px) 80vw, 380px"
           className="object-cover"
-          style={{ borderRadius: "18px 18px 0 0" }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 50%)",
-            borderRadius: "18px 18px 0 0",
-          }}
+          style={{ borderRadius: "24px" }}
         />
       </div>
 
       {/* Text */}
-      <div className="flex flex-col px-5 pt-4 pb-5" style={{ flex: 1, overflow: "hidden" }}>
+      <div className="flex flex-col px-3 pt-6 pb-2" style={{ flex: 1, overflow: "hidden" }}>
         <h3
-          className={`text-[1.25rem] sm:text-[1.35rem] font-bold text-gray-900 mb-2 leading-snug ${gloock.className}`}
+          className={`text-[1.3rem] sm:text-[1.4rem] font-bold text-gray-600 mb-2 leading-snug text-center ${gloock.className}`}
           style={{ flexShrink: 0 }}
         >
           {room.title}
         </h3>
         <p
-          className="text-[0.82rem] text-gray-500 leading-relaxed"
+          className="text-[0.75rem] text-gray-400 leading-relaxed text-center"
           style={{
             flex: 1,
             overflow: "hidden",
@@ -183,13 +158,8 @@ function RoomCard({
         </p>
 
         <button
-          className="mt-4 w-full rounded-full py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 shadow-md"
-          style={{
-            flexShrink: 0,
-            background: isActive ? "#6DA003" : "transparent",
-            color: isActive ? "#ffffff" : "#6DA003",
-            border: "2px solid #6DA003",
-          }}
+          className="mt-4 w-full rounded-full py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 shadow-sm bg-transparent text-[#6DA003] border-2 border-[#6DA003] hover:bg-[#6DA003] hover:text-white cursor-pointer"
+          style={{ flexShrink: 0 }}
         >
           View Details
         </button>
@@ -199,97 +169,166 @@ function RoomCard({
 }
 
 /* ─────────────────────────────────────────────
-   Carousel
+   Carousel with Arc MotionPath
 ───────────────────────────────────────────── */
 function RoomCarousel({ rooms }: { rooms: Room[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [center, setCenter] = useState(0);
-  const [animKey, setAnimKey] = useState(0);
   const animating = useRef(false);
   const n = rooms.length;
+  const timelines = useRef<gsap.core.Timeline[]>([]);
+  const hasAnimatedIn = useRef(false);
 
-  const navigate = (dir: "left" | "right") => {
-    if (animating.current) return;
+  useEffect(() => {
+    timelines.current = [];
+    hasAnimatedIn.current = false;
+  }, [rooms]);
+
+  useGSAP(() => {
+    const cards = gsap.utils.toArray<HTMLElement>(".room-arc-card");
+    
+    if (timelines.current.length === 0) {
+      cards.forEach((card) => {
+        const tl = gsap.timeline({ paused: true });
+        tl.to(card, {
+          motionPath: {
+            path: "#arc-path",
+            align: "#arc-path",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true,
+          },
+          duration: 1,
+          ease: "none"
+        });
+        timelines.current.push(tl);
+      });
+    }
+
+    cards.forEach((card, idx) => {
+      let diff = idx - center;
+      if (diff > n / 2) diff -= n;
+      if (diff < -n / 2) diff += n;
+      
+      const targetProgress = 0.5 + diff * 0.265; // approx 440px spacing (320px width + 120px gap)
+      
+      const tl = timelines.current[idx];
+      if (!tl) return;
+
+      if (!hasAnimatedIn.current) {
+        // Scroll entrance animation
+        gsap.fromTo(tl, { progress: 0 }, {
+          progress: targetProgress,
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+          }
+        });
+        gsap.fromTo(card, { opacity: 0, scale: 0.5 }, {
+          opacity: Math.abs(diff) > 1 ? 0 : 1,
+          scale: Math.abs(diff) > 0 ? 0.92 : 1,
+          zIndex: Math.abs(diff) === 0 ? 10 : 5,
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+          }
+        });
+      } else {
+        // Carousel navigation animation
+        const currentProgress = tl.progress();
+        if (Math.abs(targetProgress - currentProgress) > 0.4) {
+           tl.progress(targetProgress);
+        } else {
+           gsap.to(tl, { progress: targetProgress, duration: 0.6, ease: "power2.out" });
+        }
+        
+        gsap.to(card, {
+          opacity: Math.abs(diff) > 1 ? 0 : 1,
+          scale: Math.abs(diff) > 0 ? 0.92 : 1,
+          zIndex: Math.abs(diff) === 0 ? 10 : 5,
+          duration: 0.6,
+          ease: "power2.out",
+        });
+      }
+    });
+
+    if (!hasAnimatedIn.current) {
+      ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top 80%",
+        onEnter: () => {
+          setTimeout(() => { hasAnimatedIn.current = true; }, 1500);
+        }
+      });
+    }
+
+  }, { dependencies: [center, rooms], scope: containerRef });
+
+  const navigate = useCallback((dir: "left" | "right") => {
+    if (animating.current || !hasAnimatedIn.current) return;
     animating.current = true;
+    setCenter((c) => dir === "left" ? (c + 1) % n : (c - 1 + n) % n);
+    setTimeout(() => { animating.current = false; }, 600);
+  }, [n]);
 
-    setCenter((c) =>
-      dir === "left" ? (c + 1) % n : (c - 1 + n) % n
-    );
-    setAnimKey((k) => k + 1);
-
-    setTimeout(() => {
-      animating.current = false;
-    }, 520);
-  };
-
-  const leftIdx = (center - 1 + n) % n;
-  const rightIdx = (center + 1) % n;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      navigate("left");
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [navigate]);
 
   return (
-    <div className="flex items-center gap-3 sm:gap-5 w-full">
-      {/* ← Arrow */}
-      <button
-        onClick={() => navigate("right")}
-        className="shrink-0 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-sm"
-        aria-label="Previous room"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
+    <div ref={containerRef} className="relative w-full h-[600px] flex items-center justify-center overflow-hidden sm:overflow-visible">
+      {/* SVG Path for MotionPath */}
+      <svg className="absolute w-full h-[600px] pointer-events-none invisible" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
+        <path id="arc-path" d="M 0 372 Q 600 228 1200 372" fill="none" stroke="black" />
+      </svg>
 
-      {/* Cards grid */}
-      <div className="flex-1 grid grid-cols-3 gap-3 sm:gap-5 items-end">
-
-        {/* Left card — click brings it to center via navigate("right") */}
-        <div className="flex justify-end">
-          <div className="w-full max-w-[340px]">
-            <RoomCard
-              key={`left-${animKey}`}
-              room={rooms[leftIdx]}
-              slot="left"
-              animKey={animKey}
-              onSelect={() => navigate("right")}
-            />
-          </div>
+      {/* Cards */}
+      {rooms.map((room, idx) => (
+        <div 
+          key={room.id} 
+          className="room-arc-card absolute top-0 left-0 w-[280px] sm:w-[320px] origin-center cursor-pointer" 
+          onClick={() => {
+            let diff = idx - center;
+            if (diff > n / 2) diff -= n;
+            if (diff < -n / 2) diff += n;
+            if (diff === 1) navigate("right");
+            if (diff === -1) navigate("left");
+          }}
+        >
+          <RoomCard room={room} isActive={idx === center} />
         </div>
+      ))}
 
-        {/* Center card */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-[380px]">
-            <RoomCard
-              key={`center-${animKey}`}
-              room={rooms[center]}
-              slot="center"
-              animKey={animKey}
-            />
-          </div>
-        </div>
-
-        {/* Right card — click brings it to center via navigate("left") */}
-        <div className="flex justify-start">
-          <div className="w-full max-w-[340px]">
-            <RoomCard
-              key={`right-${animKey}`}
-              room={rooms[rightIdx]}
-              slot="right"
-              animKey={animKey}
-              onSelect={() => navigate("left")}
-            />
-          </div>
-        </div>
-
+      {/* Navigation Buttons */}
+      <div className="absolute top-[60%] -translate-y-1/2 left-0 sm:-left-4 z-20">
+        <button
+          onClick={() => navigate("right")}
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+          aria-label="Previous room"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
       </div>
 
-      {/* → Arrow */}
-      <button
-        onClick={() => navigate("left")}
-        className="shrink-0 flex h-11 w-11 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-sm"
-        aria-label="Next room"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+      <div className="absolute top-[60%] -translate-y-1/2 right-0 sm:-right-4 z-20">
+        <button
+          onClick={() => navigate("left")}
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+          aria-label="Next room"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 }
@@ -303,20 +342,13 @@ const Rooms = () => {
   return (
     <section
       id="rooms"
-      className="relative w-full py-20 overflow-hidden"
-      style={{
-        background:
-          "linear-gradient(160deg, #f0f4e8 0%, #e8ede0 60%, #dde5d0 100%)",
-      }}
+      className="relative w-full h-screen py-20 bg-[#E1E1E1] overflow-hidden"
     >
-      {/* Decorative blobs */}
       <div
-        className="pointer-events-none absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20"
-        style={{ background: "radial-gradient(circle, #6DA003 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -top-20 -left-20 w-72 h-72 rounded-full"
       />
       <div
-        className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full opacity-15"
-        style={{ background: "radial-gradient(circle, #3a6b00 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -bottom-24 -right-16 w-80 h-80 rounded-full"
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
@@ -324,16 +356,7 @@ const Rooms = () => {
         <div className="flex justify-between items-center text-center mb-10">
           <span className="block h-px w-64 bg-[#6DA003]" />
 
-          {/* <div className="flex items-center gap-4 mb-3">
-            <span className="block h-px w-16 bg-[#6DA003]/50" />
-            <span className="text-xs font-semibold tracking-widest uppercase text-[#6DA003]">
-              Accommodation
-            </span>
-            <span className="block h-px w-16 bg-[#6DA003]/50" />
-          </div> */}
-
           <div className="flex justify-between items-center gap-4">
-
             <h2
               className={`text-4xl sm:text-5xl lg:text-[3.4rem] leading-tight tracking-tight text-gray-900 font-[glidaDisplay]`}
             >
@@ -344,16 +367,10 @@ const Rooms = () => {
             </h2>
           </div>
           <span className="block h-px w-64 bg-[#6DA003]" />
-
-          {/* <p className="mt-4 max-w-xl text-gray-500 text-sm sm:text-base leading-relaxed">
-            {activeTab === "budget"
-              ? "Affordable comfort in the heart of the Sundarbans — great value stays that don't compromise on the experience."
-              : "Indulge in our finest rooms crafted for discerning travellers seeking an elevated Sundarban retreat."}
-          </p> */}
-
         </div>
+
         {/* ── Tab Toggle ── */}
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center relative z-20">
           <div
             className="relative flex rounded-full p-1"
             style={{
@@ -370,7 +387,7 @@ const Rooms = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`
                   relative z-10 px-8 py-2.5 rounded-full text-sm font-semibold tracking-wide capitalize
-                  transition-all duration-300
+                  transition-all duration-300 cursor-pointer
                   ${activeTab === tab
                     ? "bg-[#6DA003] text-white shadow-md"
                     : "text-[#6DA003] hover:bg-[#6DA003]/10"
@@ -384,32 +401,10 @@ const Rooms = () => {
         </div>
 
         {/* ── Carousel ── */}
-        <div
-          key={activeTab}
-          style={{ animation: "fadeSlideIn 0.4s ease forwards" }}
-        >
+        <div key={activeTab} >
           <RoomCarousel rooms={activeTab === "budget" ? budgetRooms : premiumRooms} />
         </div>
       </div>
-
-      <style>{`
-        @keyframes fadeSlideIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes appearFromLeft {
-          from { opacity: 0; transform: rotate(-5deg) scale(0.92) translateX(-80px); }
-          to   { opacity: 0.82; transform: rotate(-5deg) scale(0.92) translateX(0); }
-        }
-        @keyframes appearFromRight {
-          from { opacity: 0; transform: rotate(5deg) scale(0.92) translateX(80px); }
-          to   { opacity: 0.82; transform: rotate(5deg) scale(0.92) translateX(0); }
-        }
-        @keyframes appearCenter {
-          from { opacity: 0; transform: rotate(0deg) scale(0.96) translateY(20px); }
-          to   { opacity: 1; transform: rotate(0deg) scale(1) translateY(0); }
-        }
-      `}</style>
     </section>
   );
 };

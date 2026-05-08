@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-6 left-1/2 z-50 w-[95%] -translate-x-1/2 rounded-full border border-white/20 bg-white/10 px-6 py-3 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300">
+    <nav className="fixed top-6 left-1/2 z-50 w-[95%] -translate-x-1/2 rounded-full border border-white/20 bg-white/70 px-6 py-3 backdrop-blur-xs transition-all duration-300">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
