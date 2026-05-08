@@ -2,6 +2,7 @@ import HeroPage from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import Trips from "@/components/Trips";
 import Rooms from "@/components/Rooms";
+import Gallery from "@/components/Gallery";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <HeroPage />
       <Trips />
       <Rooms />
+      <Gallery />
     </main>
   );
 }
