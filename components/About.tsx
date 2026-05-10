@@ -1,4 +1,10 @@
 import Image from "next/image";
+import { Open_Sans } from "next/font/google";
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  variable: "--font-open-sans",
+});
 
 export default function About() {
     return (
@@ -76,10 +82,10 @@ export default function About() {
                             </div>
 
                             <div className="flex h-full flex-col items-center justify-center bg-white px-8 text-center">
-                                <p className="text-[30px] font-light leading-none text-[#858585]">
+                                <p className={`text-[30px] ${openSans.variable} leading-none text-[#858585]`}>
                                     Welcoming you
                                 </p>
-                                <p className="mt-1 text-[30px] font-light leading-none text-[#858585]">
+                                <p className={`mt-1 text-[30px] ${openSans.variable} leading-none text-[#858585]`}>
                                     at
                                 </p>
 
