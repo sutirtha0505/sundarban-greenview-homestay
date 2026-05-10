@@ -12,7 +12,7 @@ export default function SocialMedia() {
             </div>
             <div className="flex w-full p-6 gap-6">
                 <div className="w-1/2 rounded-2xl">
-                    <iframe className="rounded-2xl w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/UWMzKXsY9A4?si=Ggl2duGU7NoP8Ee6" title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen></iframe>
+                    <iframe className="rounded-2xl w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/1L0aiF4-gUU?si=fZ-0P_K_xnP7A3Q1" title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen></iframe>
                 </div>
                 <div className="w-1/2 rounded-2xl">
                     <Image
