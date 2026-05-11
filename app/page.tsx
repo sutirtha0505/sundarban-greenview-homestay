@@ -1,12 +1,12 @@
-import HeroPage from "@/components/hero";
+import HeroPage from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import Trips from "@/components/Trips";
-import Rooms from "@/components/rooms";
+import Rooms from "@/components/Rooms";
 import Gallery from "@/components/Gallery";
+import Reviews from "@/components/Reviews";
 import About from "@/components/About";
 import Activities from "@/components/Activities";
 import SocialMedia from "@/components/SocialMedia";
-import Reviews from "@/components/Reviews";
 
 export default function Home() {
   return (
