@@ -10,17 +10,26 @@ export default function SocialMedia() {
                 </h2>
                 <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
             </div>
-            <div className="flex w-full p-6 gap-6">
-                <div className="w-1/2 rounded-2xl">
-                    <iframe className="rounded-2xl w-full h-full" width="560" height="315" src="https://www.youtube.com/embed/1L0aiF4-gUU?si=fZ-0P_K_xnP7A3Q1" title="YouTube video player"  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"  allowFullScreen></iframe>
+            <div className="flex w-full flex-1 p-6 gap-6 min-h-0">
+                <div className="w-1/2 rounded-2xl overflow-hidden">
+                    <iframe
+                        className="rounded-2xl w-full h-full"
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/1L0aiF4-gUU?si=fZ-0P_K_xnP7A3Q1"
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                    ></iframe>
                 </div>
-                <div className="w-1/2 rounded-2xl">
+                <div className="relative w-1/2 rounded-2xl overflow-hidden">
                     <Image
-                        src={"/images/social/image2.png"}
+                        src="/images/social/image2.png"
                         alt="Social Media"
-                        width={1440}
-                        height={1440}
-                        className="w-full h-full object-cover rounded-2xl"
+                        fill
+                        sizes="50vw"
+                        className="object-cover rounded-2xl"
                     />
                 </div>
             </div>
