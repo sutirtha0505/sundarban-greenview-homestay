@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-//data 
-
 const NAV_LINKS = [
     { href: "#trips", label: "Book your Trips" },
     { href: "#about", label: "About our Homestay" },
@@ -38,8 +36,6 @@ const CONTACT_ITEMS = [
     },
 ];
 
-//helpers
-
 function ContactItem({ icon, label }: { icon: React.ReactNode; label: string }) {
     return (
         <div className="flex flex-col items-center gap-[14px]">
@@ -52,7 +48,7 @@ function ContactItem({ icon, label }: { icon: React.ReactNode; label: string }) 
             >
                 {icon}
             </svg>
-            <span className="text-[18px] text-[#C9FF4A]">{label}</span>
+            <span className="text-[14px] md:text-[18px] text-center text-[#C9FF4A]">{label}</span>
         </div>
     );
 }
@@ -69,39 +65,37 @@ function Field({
     fullWidth?: boolean;
 }) {
     return (
-        <div className={fullWidth ? "col-span-2" : undefined}>
+        <div className={fullWidth ? "col-span-1 sm:col-span-2" : undefined}>
             <label
                 htmlFor={id}
-                className="mb-[12px] block text-[30px] leading-none text-[#F4EBDD]"
+                className="mb-[8px] block text-[20px] md:text-[30px] leading-none text-[#F4EBDD]"
             >
                 {label}
             </label>
             <input
                 id={id}
                 type={type}
-                className="h-[72px] w-full rounded-full bg-white/70 px-[24px] text-[18px] text-[#222] outline-none"
+                className="h-[52px] md:h-[72px] w-full rounded-full bg-white/70 px-[20px] md:px-[24px] text-[15px] md:text-[18px] text-[#222] outline-none"
             />
         </div>
     );
 }
 
-//component
-
 export default function Contact() {
     return (
-        <div className="min-h-screen w-full bg-[#878787] px-[48px] py-[42px]">
-            <div className="mx-auto flex w-full max-w-[1600px] gap-[72px]">
+        <div className="min-h-screen w-full bg-[#878787] px-4 py-8 md:px-8 md:py-10 lg:px-[48px] lg:py-[42px]">
+            <div className="mx-auto flex w-full max-w-[1600px] flex-col-reverse gap-10 lg:flex-row lg:gap-[72px]">
 
                 {/* LEFT SIDE */}
-                <div className="flex w-[39%] min-w-[520px] flex-col">
+                <div className="flex w-full flex-col lg:w-[39%] lg:min-w-[520px]">
 
                     {/* Image card */}
-                    <div className="relative h-[920px] overflow-hidden rounded-[18px]">
+                    <div className="relative h-[440px] overflow-hidden rounded-[18px] sm:h-[540px] md:h-[620px] lg:h-[920px]">
                         <Image
                             src="/images/gallery/image8.jpg"
                             alt="Sundarban wildlife"
                             fill
-                            sizes="39vw"
+                            sizes="(max-width: 1024px) 100vw, 39vw"
                             className="object-cover object-center"
                             priority
                         />
@@ -117,7 +111,7 @@ export default function Contact() {
                                     className="h-auto w-[132px] object-contain"
                                 />
 
-                                <p className="mt-[18px] text-center font-serif text-[30px] leading-none text-[#C9FF4A]">
+                                <p className="mt-[14px] text-center font-serif text-[18px] md:text-[22px] lg:text-[30px] leading-none text-[#C9FF4A]">
                                     Explore. Relax.Mangroves
                                 </p>
 
@@ -152,13 +146,13 @@ export default function Contact() {
                         </div>
                     </div>
 
-                    <p className="mt-[28px] font-serif text-[30px] leading-none text-[#F4EBDD]">
+                    <p className="mt-[20px] font-serif text-[16px] md:text-[22px] lg:text-[30px] leading-snug text-[#F4EBDD]">
                         CopyRight © 2025 <span className="text-[#C9FF4A]">GreenView Homestay</span>
                     </p>
 
                     <div className="mt-[44px] grid grid-cols-2 gap-x-[36px] gap-y-[22px]">
                         {NAV_LINKS.map(({ href, label }) => (
-                            <a key={href + label} href={href} className="text-[18px] leading-none text-[#D7FF4A]">
+                            <a key={href + label} href={href} className="text-[13px] md:text-[15px] lg:text-[18px] leading-none text-[#D7FF4A]">
                                 {label}
                             </a>
                         ))}
@@ -166,20 +160,20 @@ export default function Contact() {
                 </div>
 
                 {/* RIGHT SIDE */}
-                <div className="flex flex-1 flex-col pt-[2px]">
-                    <div className="ml-auto w-full max-w-[920px]">
+                <div className="flex w-full flex-col lg:flex-1">
+                    <div className="mx-auto w-full max-w-[920px]">
 
-                        <h1 className="text-center font-serif text-[86px] leading-[0.95] text-[#F4EBDD]">
+                        <h1 className="text-center font-serif text-[40px] leading-[0.95] text-[#F4EBDD] sm:text-[56px] md:text-[68px] lg:text-[86px]">
                             Let&apos;s Work <span className="text-[#C9FF4A]">Together</span>
                         </h1>
 
-                        <p className="mt-[18px] text-center text-[30px] leading-none text-[#F4EBDD]">
+                        <p className="mt-[18px] text-center text-[16px] leading-snug text-[#F4EBDD] md:text-[22px] lg:text-[30px] lg:leading-none">
                             Drop me a message or reach out directly - I&apos;ll get back within a day
                         </p>
 
                         {/* Contact info row */}
                         <div className="mt-[28px] border-t border-white/55 pt-[28px]">
-                            <div className="flex items-start justify-center gap-[140px]">
+                            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-center md:gap-[60px] lg:gap-[140px]">
                                 {CONTACT_ITEMS.map(({ label, icon }) => (
                                     <ContactItem key={label} icon={icon} label={label} />
                                 ))}
@@ -188,33 +182,33 @@ export default function Contact() {
 
                         {/* Form */}
                         <div className="mt-[34px] border-t border-white/55 pt-[32px]">
-                            <form className="grid grid-cols-2 gap-x-[24px] gap-y-[20px]">
+                            <form className="grid grid-cols-1 gap-x-[24px] gap-y-[20px] sm:grid-cols-2">
                                 <Field id="firstName" label="First Name" />
                                 <Field id="lastName" label="Last Name" />
                                 <Field id="email" label="E-Mail Address" type="email" fullWidth />
                                 <Field id="phone" label="Phone No." type="tel" fullWidth />
 
-                                <div className="col-span-2">
+                                <div className="col-span-1 sm:col-span-2">
                                     <label
                                         htmlFor="review"
-                                        className="mb-[12px] block text-[30px] leading-none text-[#F4EBDD]"
+                                        className="mb-[8px] block text-[20px] md:text-[30px] leading-none text-[#F4EBDD]"
                                     >
                                         Write A Review
                                     </label>
                                     <textarea
                                         id="review"
                                         rows={4}
-                                        className="h-[150px] w-full resize-none rounded-[28px] bg-white/70 px-[24px] py-[18px] text-[18px] text-[#222] outline-none"
+                                        className="h-[120px] md:h-[150px] w-full resize-none rounded-[28px] bg-white/70 px-[20px] md:px-[24px] py-[14px] md:py-[18px] text-[15px] md:text-[18px] text-[#222] outline-none"
                                     />
                                 </div>
 
-                                <div className="col-span-2 mt-[18px]">
+                                <div className="col-span-1 mt-[18px] sm:col-span-2">
                                     <button
                                         type="submit"
-                                        className="flex h-[78px] w-full items-center justify-between rounded-full bg-[#78A700] px-[34px] text-left text-[31px] font-serif text-[#F4EBDD]"
+                                        className="flex h-[56px] md:h-[66px] lg:h-[78px] w-full items-center justify-between rounded-full bg-[#78A700] px-[22px] md:px-[28px] lg:px-[34px] text-left text-[18px] md:text-[24px] lg:text-[31px] font-serif text-[#F4EBDD]"
                                     >
                                         <span>Send Message</span>
-                                        <span className="flex h-[46px] w-[46px] items-center justify-center rounded-full bg-[#D9D9D9] text-[#333]">
+                                        <span className="flex h-[34px] w-[34px] md:h-[40px] md:w-[40px] lg:h-[46px] lg:w-[46px] items-center justify-center rounded-full bg-[#D9D9D9] text-[#333]">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
                                                 <path d="M9 6l6 6-6 6" />
                                             </svg>

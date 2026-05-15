@@ -63,10 +63,24 @@ const tripsData = [
 
 export default function Trips() {
   const [startIndex, setStartIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const w = window.innerWidth;
+      setIsMobile(w < 768);
+      setIsTablet(w >= 768 && w < 1024);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const getVisibleTrips = () => {
+    const count = isMobile ? 1 : isTablet ? 2 : 3;
     const visible = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < count; i++) {
       visible.push(tripsData[(startIndex + i) % tripsData.length]);
     }
     return visible;
@@ -88,13 +102,13 @@ export default function Trips() {
   }, [handleNext]);
 
   return (
-    <section className="w-full h-screen py-24 bg-[#FFFFFF]">
+    <section className="w-full md:min-h-screen py-12 md:py-24 bg-[#FFFFFF]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         
         {/* Header Section */}
-        <div className="flex items-center justify-center gap-6 mb-16">
+        <div className="flex items-center justify-center gap-4 mb-8 md:mb-16">
           <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
-          <h2 className="text-4xl md:text-5xl font-serif">
+          <h2 className="text-center text-3xl md:text-5xl font-serif">
             <span className="text-[#71A129]">Book your</span> <span className="text-[#111111]">Trips</span>
           </h2>
           <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
@@ -105,7 +119,7 @@ export default function Trips() {
           {/* Left Controller */}
           <button 
             onClick={handlePrev} 
-            className="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
+            className="absolute -left-2 sm:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
             aria-label="Previous trips"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -114,7 +128,7 @@ export default function Trips() {
           </button>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {getVisibleTrips().map((trip, idx) => (
               <div 
                 key={`${trip.id}-${idx}`}
@@ -134,7 +148,7 @@ export default function Trips() {
                 {/* Pill */}
                 {trip.pillText && (
                   <div className="flex justify-center -mt-4 relative z-10 mb-4">
-                    <div className="bg-[#FFFFFF] border border-[#555555] rounded-full px-5 py-1.5 text-[10px] text-[#111111] shadow-sm">
+                    <div className="bg-[#FFFFFF] border border-[#555555] rounded-full px-4 py-1.5 text-[9px] md:text-[10px] text-[#111111] shadow-sm text-center max-w-full truncate">
                       {trip.pillText}
                     </div>
                   </div>
@@ -144,23 +158,23 @@ export default function Trips() {
                 {/* Content */}
                 <div className="px-2 pb-2 grow flex flex-col">
                   {trip.durationText && (
-                    <p className="text-[10px] font-bold text-[#444444] mb-1">
+                    <p className="text-[11px] md:text-[10px] font-bold text-[#444444] mb-1 uppercase tracking-wide">
                       {trip.durationText}
                     </p>
                   )}
                   
                   {trip.title && (
-                    <h3 className="text-[16px] font-bold text-[#888888] leading-tight mb-4 line-clamp-2 min-h-10">
+                    <h3 className="text-[15px] md:text-[16px] font-bold text-[#888888] leading-tight mb-4 line-clamp-2 min-h-10">
                       {trip.title}
                     </h3>
                   )}
                   
                   {trip.rating && (
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="bg-[#71A129] text-[#FFFFFF] px-2 py-0.5 rounded-md text-[11px] font-bold">
+                      <div className="bg-[#71A129] text-[#FFFFFF] px-2 py-0.5 rounded-md text-[12px] md:text-[11px] font-bold">
                         {trip.rating}
                       </div>
-                      <span className="text-[#71A129] text-[11px] font-semibold">
+                      <span className="text-[#71A129] text-[12px] md:text-[11px] font-semibold">
                         {trip.reviews}
                       </span>
                     </div>
@@ -168,7 +182,7 @@ export default function Trips() {
 
                   {trip.price && (
                     <div className="mt-auto mb-5 flex items-baseline gap-1.5">
-                      <span className="text-2xl font-bold text-[#111111]">{trip.price}</span>
+                      <span className="text-xl md:text-2xl font-bold text-[#111111]">{trip.price}</span>
                       <span className="text-[12px] text-[#888888] font-medium">/ per person</span>
                     </div>
                   )}
@@ -198,7 +212,7 @@ export default function Trips() {
           {/* Right Controller */}
           <button 
             onClick={handleNext} 
-            className="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
+            className="absolute -right-2 sm:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
             aria-label="Next trips"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

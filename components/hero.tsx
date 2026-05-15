@@ -88,17 +88,17 @@ export default function HeroPage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full w-full flex-col justify-top px-4 sm:px-8 lg:px-16 pt-32">
-        <div className="mb-8 w-full">
-          <h1 className={`mb-6 text-5xl text-white sm:text-7xl lg:text-[5.5rem] leading-tight tracking-tight ${gloock.className}`}>
+      <div className="relative z-10 flex h-full w-full flex-col justify-top px-4 sm:px-8 lg:px-16 pt-35 sm:pt-32">
+        <div className="mb-6 w-full">
+          <h1 className={`mb-4 sm:mb-6 text-4xl sm:text-7xl lg:text-[5.5rem] text-white leading-tight tracking-tight ${gloock.className}`}>
             Escape. <span className="text-[#C5FE4E]">Relax.</span> Mangroves.
           </h1>
-          <p className="max-w-5xl text-base text-gray-200 sm:text-lg lg:text-xl leading-relaxed">
+          <p className="max-w-5xl text-sm sm:text-lg lg:text-xl leading-relaxed text-gray-200 line-clamp-4 sm:line-clamp-none">
             Escape into the untouched wilderness of the Sundarbans and experience a destination where nature, tranquility, and authentic village hospitality come together in perfect harmony. Sundarban Greenview Homestay offers a peaceful retreat in the heart of the world&apos;s largest mangrove forest, surrounded by serene rivers, lush greenery, and breathtaking natural beauty. Explore winding waterways on traditional boat rides, witness mesmerizing sunsets over the delta, and discover the rich biodiversity that makes the Sundarbans one of the most extraordinary ecosystems on Earth. From exotic birds and spotted deer to the legendary Royal Bengal Tiger, every journey through the forest carries the excitement of adventure and discovery. Beyond the wilderness, immerse yourself in the warmth of local culture, enjoy freshly prepared Bengali cuisine, and experience the calm simplicity of life far away from crowded cities and constant noise. Whether you seek relaxation, wildlife exploration, photography, or meaningful moments with family and friends, Sundarban Greenview Homestay creates an unforgettable escape where every breeze, river, and sunrise reconnects you with the beauty of the natural world.
           </p>
         </div>
 
-        <div className="mt-6 flex w-full flex-col items-start gap-8 md:flex-row md:items-end">
+        <div className="mt-4 sm:mt-6 flex w-full flex-col items-start gap-8 md:flex-row md:items-end">
           <button className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-[#6DA003] px-8 py-3.5 text-lg text-white transition-all hover:bg-[#5b8703] border border-[#8FCE05]">
             <span className="relative z-10 font-medium">Book your Trip</span>
             <svg
@@ -118,42 +118,64 @@ export default function HeroPage() {
         </div>
 
         {/* Room Cards Carousel */}
-        <div className="absolute bottom-10 right-10 sm:right-20 lg:right-32 z-20 flex items-center gap-2 max-w-[calc(100vw-2rem)] sm:max-w-[60vw] lg:max-w-[50vw]">
-          <button
-            onClick={scrollLeft}
-            className="hidden sm:flex items-center justify-center h-10 w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-          </button>
+        <div className="absolute bottom-4 sm:bottom-10 left-0 sm:left-auto right-0 sm:right-20 lg:right-32 z-20 flex flex-col items-center gap-2 px-2 sm:px-0 sm:max-w-[60vw] lg:max-w-[50vw]">
 
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 md:pb-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-          >
-            {roomImages.map((src, index) => (
+          {/* Row: left arrow + scrollable images + right arrow */}
+          <div className="flex items-center gap-2 w-full">
+            <button
+              onClick={scrollLeft}
+              className="flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <div
+              ref={scrollContainerRef}
+              className="flex gap-2 overflow-x-auto pb-1 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex-1 min-w-0"
+            >
+              {roomImages.map((src, index) => (
+                <button
+                  key={src}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`relative h-28 w-36 sm:h-32 sm:w-48 shrink-0 overflow-hidden rounded-xl group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#CEF15D]" : "border-[3px] border-transparent"
+                    }`}
+                >
+                  <Image
+                    src={src}
+                    alt={`Room ${index + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={scrollRight}
+              className="flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Dot indicators — mobile only */}
+          <div className="flex sm:hidden gap-1.5 justify-center">
+            {roomImages.map((_, index) => (
               <button
-                key={src}
+                key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`relative h-28 w-40 shrink-0 overflow-hidden rounded-xl sm:h-32 sm:w-48 group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#CEF15D]" : "border-[3px] border-transparent"
+                className={`rounded-full transition-all duration-300 ${index === currentImageIndex ? 'w-4 h-2 bg-white' : 'w-2 h-2 bg-white/50'
                   }`}
-              >
-                <Image
-                  src={src}
-                  alt={`Room ${index + 1}`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </button>
+                aria-label={`Go to image ${index + 1}`}
+              />
             ))}
           </div>
 
-          <button
-            onClick={scrollRight}
-            className="hidden sm:flex items-center justify-center h-10 w-10 shrink-0 rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:bg-black/70 hover:scale-110 border border-white/20"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          </button>
         </div>
       </div>
     </div>

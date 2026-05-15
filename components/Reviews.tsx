@@ -59,7 +59,7 @@ const reviewsData: Review[] = [
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <div className="w-full bg-white rounded-[24px] p-4 border border-[#71A129]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)] flex flex-col h-[460px]">
+    <div className="w-full bg-white rounded-[24px] p-4 border border-[#71A129]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)] flex flex-col min-h-[380px] sm:h-[460px]">
       <div className="relative w-full h-[200px] rounded-[16px] overflow-hidden shrink-0">
         <Image
           src={review.image}
@@ -107,7 +107,7 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 
   useGSAP(() => {
     const cards = gsap.utils.toArray<HTMLElement>(".review-arc-card");
-    
+
     if (timelines.current.length === 0) {
       cards.forEach((card) => {
         const tl = gsap.timeline({ paused: true });
@@ -129,9 +129,9 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
       let diff = idx - center;
       if (diff > n / 2) diff -= n;
       if (diff < -n / 2) diff += n;
-      
-      const targetProgress = 0.5 + diff * 0.265; 
-      
+
+      const targetProgress = 0.5 + diff * 0.265;
+
       const tl = timelines.current[idx];
       if (!tl) return;
 
@@ -159,11 +159,11 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
       } else {
         const currentProgress = tl.progress();
         if (Math.abs(targetProgress - currentProgress) > 0.4) {
-           tl.progress(targetProgress);
+          tl.progress(targetProgress);
         } else {
-           gsap.to(tl, { progress: targetProgress, duration: 0.6, ease: "power2.out" });
+          gsap.to(tl, { progress: targetProgress, duration: 0.6, ease: "power2.out" });
         }
-        
+
         gsap.to(card, {
           opacity: Math.abs(diff) > 1 ? 0 : 1,
           scale: Math.abs(diff) > 0 ? 0.92 : 1,
@@ -201,16 +201,16 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
   }, [navigate]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[750px] flex items-center justify-center overflow-hidden sm:overflow-visible mt-8">
+    <div ref={containerRef} className="relative w-full h-[560px] sm:h-[750px] flex items-center justify-center overflow-hidden sm:overflow-visible mt-8">
       <svg className="absolute w-full h-[600px] pointer-events-none invisible" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
         {/* 'U' Shape Arc */}
         <path id="review-arc-path" d="M 0 228 Q 600 372 1200 228" fill="none" stroke="black" />
       </svg>
 
       {reviews.map((review, idx) => (
-        <div 
-          key={review.id} 
-          className="review-arc-card flex items-center justify-center absolute top-0 left-0 w-[280px] sm:w-[380px] origin-center cursor-pointer" 
+        <div
+          key={review.id}
+          className="review-arc-card flex items-center justify-center absolute top-0 left-0 w-[280px] sm:w-[380px] origin-center cursor-pointer"
           onClick={() => {
             let diff = idx - center;
             if (diff > n / 2) diff -= n;
@@ -253,8 +253,8 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 
 export default function Reviews() {
   return (
-    <section id="reviews" className="relative w-full h-screen py-20 bg-[#E1E1E1] overflow-hidden flex flex-col justify-center items-center">
-      <div className="flex items-center gap-4 mb-4 relative z-20">
+    <section id="reviews" className="relative w-full min-h-screen py-10 pb-[200px] sm:pb-[160px] lg:pb-10 bg-[#E1E1E1] flex flex-col items-center">
+      <div className="flex items-center gap-4 z-20">
         <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
         <h2 className="text-4xl md:text-5xl lg:text-[3.2rem] font-serif tracking-tight">
           <span className="text-[#111111]">What Our </span><span className="text-[#71A129]">Customers Think</span>

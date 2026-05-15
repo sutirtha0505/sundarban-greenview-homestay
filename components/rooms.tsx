@@ -114,7 +114,8 @@ function RoomCard({
         background: "#ffffff",
         overflow: "hidden",
         width: "100%",
-        height: "490px",
+        height: "auto",
+        minHeight: "380px",
         display: "flex",
         flexDirection: "column",
         boxShadow: isActive
@@ -125,7 +126,7 @@ function RoomCard({
       className="p-3"
     >
       {/* Image */}
-      <div className="relative w-full" style={{ height: "240px", flexShrink: 0 }}>
+      <div className="relative w-full" style={{ height: "200px", flexShrink: 0 }}>
         <Image
           src={room.image}
           alt={room.title}
@@ -282,7 +283,7 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
   }, [navigate]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[600px] flex items-center justify-center overflow-hidden sm:overflow-visible">
+    <div ref={containerRef} className="relative w-full h-[480px] sm:h-[600px] flex items-center justify-center overflow-hidden sm:overflow-visible">
       {/* SVG Path for MotionPath */}
       <svg className="absolute w-full h-[600px] pointer-events-none invisible" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
         <path id="arc-path" d="M 0 372 Q 600 228 1200 372" fill="none" stroke="black" />
@@ -342,7 +343,7 @@ const Rooms = () => {
   return (
     <section
       id="rooms"
-      className="relative w-full h-screen py-20 bg-[#E1E1E1] overflow-hidden"
+      className="relative w-full min-h-screen py-20 pb-[220px] sm:pb-[180px] lg:pb-20 bg-[#E1E1E1] overflow-hidden"
     >
       <div
         className="pointer-events-none absolute -top-20 -left-20 w-72 h-72 rounded-full"
