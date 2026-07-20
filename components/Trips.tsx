@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import SectionHeading from "./SectionHeading";
 
 const tripsData = [
   {
@@ -102,16 +103,10 @@ export default function Trips() {
   }, [handleNext]);
 
   return (
-    <section className="w-full md:min-h-screen py-12 md:py-24 bg-[#FFFFFF]">
+    <section id="trips" className="w-full md:min-h-screen py-12 md:py-24 bg-[#FFFFFF] scroll-mt-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        
-        {/* Header Section */}
-        <div className="flex items-center justify-center gap-4 mb-8 md:mb-16">
-          <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
-          <h2 className="text-center text-3xl md:text-5xl font-serif">
-            <span className="text-[#71A129]">Book your</span> <span className="text-[#111111]">Trips</span>
-          </h2>
-          <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
+        <div className="mb-8 md:mb-16">
+          <SectionHeading first="Book your" second="Trips" />
         </div>
 
         {/* Cards Carousel Container */}
@@ -119,7 +114,7 @@ export default function Trips() {
           {/* Left Controller */}
           <button 
             onClick={handlePrev} 
-            className="absolute -left-2 sm:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
+            className="absolute -left-2 sm:-left-4 lg:-left-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#6DA003] text-[#6DA003] shadow-md hover:bg-[#6DA003] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
             aria-label="Previous trips"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -132,7 +127,7 @@ export default function Trips() {
             {getVisibleTrips().map((trip, idx) => (
               <div 
                 key={`${trip.id}-${idx}`}
-                className="bg-[#FFFFFF] border border-[#71A129] rounded-[32px] p-4 shadow-[0_8px_30px_#71A1291A] hover:shadow-[0_12px_40px_#71A1292A] transition-shadow duration-300 flex flex-col h-full"
+                className="bg-[#FFFFFF] border border-[#6DA003] rounded-[32px] p-4 shadow-[0_8px_30px_rgba(109,160,3,0.10)] hover:shadow-[0_12px_40px_rgba(109,160,3,0.16)] transition-shadow duration-300 flex flex-col h-full"
               >
                 {/* Image Container */}
                 <div className="relative w-full aspect-4/3 rounded-[24px] overflow-hidden bg-[#F5F5F5]">
@@ -148,7 +143,7 @@ export default function Trips() {
                 {/* Pill */}
                 {trip.pillText && (
                   <div className="flex justify-center -mt-4 relative z-10 mb-4">
-                    <div className="bg-[#FFFFFF] border border-[#555555] rounded-full px-4 py-1.5 text-[9px] md:text-[10px] text-[#111111] shadow-sm text-center max-w-full truncate">
+                      <div className="bg-[#FFFFFF] border border-[#555555] rounded-full px-4 py-1.5 text-[9px] md:text-[10px] text-[#111111] shadow-sm text-center max-w-full truncate">
                       {trip.pillText}
                     </div>
                   </div>
@@ -171,10 +166,10 @@ export default function Trips() {
                   
                   {trip.rating && (
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="bg-[#71A129] text-[#FFFFFF] px-2 py-0.5 rounded-md text-[12px] md:text-[11px] font-bold">
+                      <div className="bg-[#6DA003] text-[#FFFFFF] px-2 py-0.5 rounded-md text-[12px] md:text-[11px] font-bold">
                         {trip.rating}
                       </div>
-                      <span className="text-[#71A129] text-[12px] md:text-[11px] font-semibold">
+                      <span className="text-[#6DA003] text-[12px] md:text-[11px] font-semibold">
                         {trip.reviews}
                       </span>
                     </div>
@@ -191,8 +186,8 @@ export default function Trips() {
                     <button 
                       className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#71A129] cursor-pointer ${
                         trip.buttonType === 'solid' 
-                          ? 'bg-[#71A129] text-[#FFFFFF] hover:bg-[#5b851f]' 
-                          : 'bg-[#FFFFFF] text-[#71A129] hover:bg-[#71A129] hover:text-[#FFFFFF] group'
+                          ? 'bg-[#6DA003] text-[#FFFFFF] hover:bg-[#5B8703]' 
+                          : 'bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group'
                       }`}
                     >
                       View Details
@@ -212,7 +207,7 @@ export default function Trips() {
           {/* Right Controller */}
           <button 
             onClick={handleNext} 
-            className="absolute -right-2 sm:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#71A129] text-[#71A129] shadow-md hover:bg-[#71A129] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
+            className="absolute -right-2 sm:-right-4 lg:-right-6 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border border-[#6DA003] text-[#6DA003] shadow-md hover:bg-[#6DA003] hover:text-white hover:scale-110 transition-all duration-300 cursor-pointer z-20"
             aria-label="Next trips"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

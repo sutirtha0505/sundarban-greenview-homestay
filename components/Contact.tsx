@@ -83,7 +83,7 @@ function Field({
 
 export default function Contact() {
     return (
-        <div className="min-h-screen w-full bg-[#878787] px-4 py-8 md:px-8 md:py-10 lg:px-[48px] lg:py-[42px]">
+        <div id="contact" className="min-h-screen w-full bg-[#878787] px-4 py-8 md:px-8 md:py-10 lg:px-[48px] lg:py-[42px] scroll-mt-28">
             <div className="mx-auto flex w-full max-w-[1600px] flex-col-reverse gap-10 lg:flex-row lg:gap-[72px]">
 
                 {/* LEFT SIDE */}
@@ -112,7 +112,7 @@ export default function Contact() {
                                 />
 
                                 <p className="mt-[14px] text-center font-serif text-[18px] md:text-[22px] lg:text-[30px] leading-none text-[#C9FF4A]">
-                                    Explore. Relax.Mangroves
+                                    Escape. Relax. Mangroves.
                                 </p>
 
                                 {/* Social icons */}
@@ -164,11 +164,11 @@ export default function Contact() {
                     <div className="mx-auto w-full max-w-[920px]">
 
                         <h1 className="text-center font-serif text-[40px] leading-[0.95] text-[#F4EBDD] sm:text-[56px] md:text-[68px] lg:text-[86px]">
-                            Let&apos;s Work <span className="text-[#C9FF4A]">Together</span>
+                            Plan Your <span className="text-[#C9FF4A]">Stay</span>
                         </h1>
 
                         <p className="mt-[18px] text-center text-[16px] leading-snug text-[#F4EBDD] md:text-[22px] lg:text-[30px] lg:leading-none">
-                            Drop me a message or reach out directly - I&apos;ll get back within a day
+                            Drop us a message or reach out directly - we&apos;ll get back within a day
                         </p>
 
                         {/* Contact info row */}
@@ -190,13 +190,13 @@ export default function Contact() {
 
                                 <div className="col-span-1 sm:col-span-2">
                                     <label
-                                        htmlFor="review"
+                                        htmlFor="message"
                                         className="mb-[8px] block text-[20px] md:text-[30px] leading-none text-[#F4EBDD]"
                                     >
-                                        Write A Review
+                                        Your Message
                                     </label>
                                     <textarea
-                                        id="review"
+                                        id="message"
                                         rows={4}
                                         className="h-[120px] md:h-[150px] w-full resize-none rounded-[28px] bg-white/70 px-[20px] md:px-[24px] py-[14px] md:py-[18px] text-[15px] md:text-[18px] text-[#222] outline-none"
                                     />

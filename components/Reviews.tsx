@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
+import SectionHeading from "./SectionHeading";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -59,7 +60,7 @@ const reviewsData: Review[] = [
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <div className="w-full bg-white rounded-[24px] p-4 border border-[#71A129]/30 shadow-[0_8px_30px_rgba(0,0,0,0.06)] flex flex-col min-h-[380px] sm:h-[460px]">
+    <div className="w-full bg-white rounded-[24px] p-4 border border-[#6DA003]/25 shadow-[0_8px_30px_rgba(109,160,3,0.08)] flex flex-col min-h-[380px] sm:h-[460px]">
       <div className="relative w-full h-[200px] rounded-[16px] overflow-hidden shrink-0">
         <Image
           src={review.image}
@@ -85,7 +86,7 @@ function ReviewCard({ review }: { review: Review }) {
               ))}
             </div>
           </div>
-          <div className="w-[85%] h-px bg-[#71A129]/40 mt-1" />
+          <div className="w-[85%] h-px bg-[#6DA003]/40 mt-1" />
         </div>
       </div>
     </div>
@@ -227,7 +228,7 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
       <div className="absolute top-[50%] -translate-y-1/2 left-2 md:-left-6 z-20">
         <button
           onClick={() => navigate("right")}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-[#71A129] text-[#71A129] transition-all duration-300 hover:bg-[#71A129] hover:text-white hover:scale-110 shadow-sm bg-transparent"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-sm bg-transparent"
           aria-label="Previous review"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,7 +240,7 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
       <div className="absolute top-[50%] -translate-y-1/2 right-2 md:-right-6 z-20">
         <button
           onClick={() => navigate("left")}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-[#71A129] text-[#71A129] transition-all duration-300 hover:bg-[#71A129] hover:text-white hover:scale-110 shadow-sm bg-transparent"
+          className="flex h-12 w-12 items-center justify-center rounded-full border border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-sm bg-transparent"
           aria-label="Next review"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,13 +254,9 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 
 export default function Reviews() {
   return (
-    <section id="reviews" className="relative w-full min-h-screen py-10 pb-[200px] sm:pb-[160px] lg:pb-10 bg-[#E1E1E1] flex flex-col items-center">
-      <div className="flex items-center gap-4 z-20">
-        <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
-        <h2 className="text-4xl md:text-5xl lg:text-[3.2rem] font-serif tracking-tight">
-          <span className="text-[#111111]">What Our </span><span className="text-[#71A129]">Customers Think</span>
-        </h2>
-        <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
+    <section id="reviews" className="relative w-full min-h-screen py-10 pb-[200px] sm:pb-[160px] lg:pb-10 bg-[#E1E1E1] flex flex-col items-center scroll-mt-28">
+      <div className="z-20">
+        <SectionHeading first="What Our" second="Customers Think" accentSide="right" />
       </div>
 
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 relative z-10">

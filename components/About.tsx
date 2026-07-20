@@ -8,7 +8,7 @@ const openSans = Open_Sans({
 
 export default function About() {
     return (
-        <section className="w-full bg-[#FAFAFA] py-8">
+        <section id="about" className="w-full bg-[#FAFAFA] py-8 scroll-mt-28">
             <div className="mx-auto w-full max-w-[1180px] px-4">
 
                 {/* ─── MOBILE + TABLET LAYOUT (< lg) ─── */}
@@ -35,10 +35,10 @@ export default function About() {
 
                     {/* Center text card */}
                     <div className="flex flex-col items-center justify-center bg-white px-6 md:px-10 py-8 md:py-12 text-center">
-                        <p className={`text-[20px] md:text-[26px] ${openSans.variable} leading-none text-[#858585]`}>
+                        <p className={`${openSans.className} text-[20px] md:text-[26px] leading-none text-[#858585]`}>
                             Welcoming you
                         </p>
-                        <p className={`mt-1 text-[20px] md:text-[26px] ${openSans.variable} leading-none text-[#858585]`}>
+                        <p className={`${openSans.className} mt-1 text-[20px] md:text-[26px] leading-none text-[#858585]`}>
                             at
                         </p>
 
@@ -119,10 +119,10 @@ export default function About() {
                         </div>
 
                         <div className="flex h-full flex-col items-center justify-center bg-white px-8 text-center">
-                            <p className={`text-[30px] ${openSans.variable} leading-none text-[#858585]`}>
+                            <p className={`${openSans.className} text-[30px] leading-none text-[#858585]`}>
                                 Welcoming you
                             </p>
-                            <p className={`mt-1 text-[30px] ${openSans.variable} leading-none text-[#858585]`}>
+                            <p className={`${openSans.className} mt-1 text-[30px] leading-none text-[#858585]`}>
                                 at
                             </p>
 

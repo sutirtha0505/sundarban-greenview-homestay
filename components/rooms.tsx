@@ -139,8 +139,8 @@ function RoomCard({
 
       {/* Text */}
       <div className="flex flex-col px-3 pt-6 pb-2" style={{ flex: 1, overflow: "hidden" }}>
-        <h3
-          className={`text-[1.3rem] sm:text-[1.4rem] font-bold text-gray-600 mb-2 leading-snug text-center ${gloock.className}`}
+            <h3
+              className="text-[1.3rem] sm:text-[1.4rem] font-bold text-gray-600 mb-2 leading-snug text-center"
           style={{ flexShrink: 0 }}
         >
           {room.title}
@@ -308,9 +308,9 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
 
       {/* Navigation Buttons */}
       <div className="absolute top-[60%] -translate-y-1/2 left-0 sm:-left-4 z-20">
-        <button
-          onClick={() => navigate("right")}
-          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+            <button
+              onClick={() => navigate("right")}
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
           aria-label="Previous room"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,9 +320,9 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
       </div>
 
       <div className="absolute top-[60%] -translate-y-1/2 right-0 sm:-right-4 z-20">
-        <button
-          onClick={() => navigate("left")}
-          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+            <button
+              onClick={() => navigate("left")}
+              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
           aria-label="Next room"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

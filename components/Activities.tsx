@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import SectionHeading from "./SectionHeading";
 
 const activities = [
     {
@@ -10,42 +11,42 @@ const activities = [
         title2: "Mangrove Creeks",
         guider: "with local guides",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Drift through the mangrove creeks in a small boat with a local guide, watching the shoreline open and close around you as the river changes colour with the light.",
     },
     {
         title1: "Bird Watching in the",
         title2: "Forest",
         guider: "with bird experts",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Join our early-morning birding walks to spot kingfishers, herons, bee-eaters, and other delta birdlife before the heat settles in.",
     },
     {
         title1: "Sunset",
         title2: "River Cruise",
         guider: "with river guides",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Take a slow sunset cruise and watch the river turn gold while the mangroves settle into evening and the sky opens wide above the delta.",
     },
     {
         title1: "Tiger Zone",
         title2: "Exploration",
         guider: "with forest guides",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Explore the protected forest zones and watchtowers with a licensed guide, keeping an eye out for deer, crocodiles, and the quieter signs of the forest.",
     },
     {
         title1: "Village Life",
         title2: "Experience",
         guider: "with local hosts",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Spend time in the village, listen to Bonbibi Pala or folk songs, and see how daily life flows with the tides and the seasons.",
     },
     {
         title1: "Mangrove Forest",
         title2: "Walk",
         guider: "with nature guides",
         description:
-            "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi....",
+            "Walk the edges of the mangrove forest with a naturalist guide and learn how these roots hold the delta together against salt and tide.",
     },
 ];
 
@@ -60,22 +61,19 @@ export default function Activities() {
     const activity = activities[current];
 
     return (
-        <section className="relative flex w-full py-10 md:py-14 lg:py-16 bg-[#E1E1E1]" id="activities">
+        <section className="relative flex w-full py-10 md:py-14 lg:py-16 bg-[#E1E1E1] scroll-mt-28" id="activities">
             <div className="w-full px-4 md:px-6 lg:px-8 mx-auto flex flex-col-reverse gap-8 md:flex-row">
 
                 {/* ── LEFT: Text Slider ── */}
                 <div className="flex flex-col w-full md:w-1/2">
                     {/* Heading */}
-                    <div className="flex flex-col items-center justify-center">
-                        <h1 className="font-serif text-2xl md:text-3xl lg:text-5xl mb-3 leading-tight text-center">
-                            Activities You'll Never Forget
-                        </h1>
-                        <span className="block h-[2px] w-full bg-[#6DA003] mb-10" />
+                    <div className="mb-6 md:mb-10">
+                        <SectionHeading first="Activities" second="You'll Never Forget" />
                     </div>
 
                     <div className="flex-1 min-h-[260px] md:min-h-[240px] lg:min-h-[280px] mt-4 md:mt-10 lg:mt-16" key={current}>
                         <div className="flex flex-col items-center justify-center">
-                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-normal text-[#858585] leading-snug">
+                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-normal text-[#666666] leading-snug">
                                 {activity.title1}
                             </h2>
                             <h2 className="text-3xl md:text-4xl lg:text-5xl text-[#6DA003] font-normal">
@@ -87,7 +85,7 @@ export default function Activities() {
                             {activity.guider}
                         </p>
 
-                        <p className="my-6 md:my-10 lg:my-16 text-base md:text-lg lg:text-xl text-[#858585] leading-[24px] md:leading-[26px] text-center">
+                        <p className="my-6 md:my-10 lg:my-16 text-base md:text-lg lg:text-xl text-[#666666] leading-[24px] md:leading-[26px] text-center">
                             {activity.description}
                         </p>
                     </div>

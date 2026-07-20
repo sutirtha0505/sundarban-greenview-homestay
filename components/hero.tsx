@@ -66,7 +66,7 @@ export default function HeroPage() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div id="home" className="relative h-screen w-full overflow-hidden">
       {/* Background Images */}
       {roomImages.map((src, index) => (
         <Image
@@ -99,7 +99,7 @@ export default function HeroPage() {
         </div>
 
         <div className="mt-4 sm:mt-6 flex w-full flex-col items-start gap-8 md:flex-row md:items-end">
-          <button className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-[#6DA003] px-8 py-3.5 text-lg text-white transition-all hover:bg-[#5b8703] border border-[#8FCE05]">
+          <button className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-[#6DA003] px-8 py-3.5 text-lg text-white transition-all hover:bg-[#5B8703] border border-[#8FCE05] shadow-[0_10px_24px_rgba(109,160,3,0.24)]">
             <span className="relative z-10 font-medium">Book your Trip</span>
             <svg
               className="relative z-10 h-5 w-5"
@@ -139,7 +139,7 @@ export default function HeroPage() {
                 <button
                   key={src}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`relative h-28 w-36 sm:h-32 sm:w-48 shrink-0 overflow-hidden rounded-xl group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#CEF15D]" : "border-[3px] border-transparent"
+                    className={`relative h-28 w-36 sm:h-32 sm:w-48 shrink-0 overflow-hidden rounded-xl group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#C5FE4E]" : "border-[3px] border-transparent"
                     }`}
                 >
                   <Image
