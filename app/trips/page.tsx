@@ -1,22 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import SectionHeading from "@/components/SectionHeading";
+import TripsFilterGrid from "@/components/TripsFilterGrid";
 import { tripsData } from "@/lib/data/trips";
-
-const filters = [
-  {
-    label: "Duration",
-    options: ["1N", "2N", "3N+"],
-  },
-  {
-    label: "Price",
-    options: ["Under ₹5k", "₹5k-₹7k", "₹7k+"],
-  },
-  {
-    label: "Group type",
-    options: ["Group", "Private"],
-  },
-];
 
 export default function TripsIndexPage() {
   return (
@@ -28,55 +13,7 @@ export default function TripsIndexPage() {
             Choose the Sundarbans escape that fits your pace, your group, and your budget.
           </p>
 
-          <div className="mt-8 grid gap-4 rounded-[28px] border border-[#6DA003]/15 bg-white p-4 shadow-[0_10px_30px_rgba(109,160,3,0.06)] lg:grid-cols-3 lg:items-end">
-            {filters.map((filter) => (
-              <div key={filter.label} className="flex flex-col gap-2">
-                <span className="text-[11px] uppercase tracking-[0.28em] text-[#6DA003]">{filter.label}</span>
-                <div className="flex flex-wrap gap-2">
-                  {filter.options.map((option, index) => (
-                    <button
-                      key={option}
-                      className={`rounded-full border px-4 py-2 text-sm transition-all ${index === 0 ? "border-[#6DA003] bg-[#6DA003] text-white" : "border-[#6DA003]/20 bg-[#FAFAFA] text-[#444444] hover:border-[#6DA003] hover:text-[#6DA003]"}`}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {tripsData.map((trip) => (
-              <article key={trip.slug} className="flex h-full flex-col overflow-hidden rounded-[32px] border border-[#6DA003]/20 bg-white shadow-[0_12px_40px_rgba(109,160,3,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_rgba(109,160,3,0.14)]">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image src={trip.image} alt={trip.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <div className="mb-3 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.24em] text-[#6DA003]">
-                    <span className="rounded-full border border-[#6DA003]/20 px-3 py-1">{trip.durationText}</span>
-                    <span className="rounded-full border border-[#6DA003]/20 px-3 py-1">{trip.groupType}</span>
-                  </div>
-                  <p className="text-sm leading-6 text-[#555555]">{trip.pillText}</p>
-                  <h3 className="mt-3 text-[18px] font-semibold leading-7 text-[#111111]">{trip.title}</h3>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className="rounded-md bg-[#6DA003] px-2 py-0.5 text-[12px] font-bold text-white">{trip.rating}</span>
-                    <span className="text-[12px] font-medium text-[#6DA003]">{trip.reviews}</span>
-                  </div>
-                  <div className="mt-6 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-[12px] uppercase tracking-[0.24em] text-[#666666]">From</p>
-                      <p className="text-2xl font-semibold text-[#111111]">{trip.price}</p>
-                      <p className="text-[12px] text-[#666666]">/ per person</p>
-                    </div>
-                    <Link href={`/trips/${trip.slug}`} className="inline-flex rounded-full border border-[#6DA003] px-4 py-2 text-sm font-semibold text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white">
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          <TripsFilterGrid trips={tripsData} />
 
           <div className="mt-12 overflow-hidden rounded-[32px] border border-[#6DA003]/20 bg-[#111111] px-6 py-8 text-white shadow-[0_12px_40px_rgba(17,17,17,0.16)] sm:px-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
