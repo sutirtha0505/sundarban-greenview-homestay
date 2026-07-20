@@ -156,6 +156,57 @@ export const premiumRooms: Room[] = [
 
 export const roomsData: Room[] = [...budgetRooms, ...premiumRooms];
 
+/* ─────────────────────────────────────────────
+   Filter options for /rooms
+───────────────────────────────────────────── */
+
+/**
+ * Length of stay. Single-select — it's an input to the price calculation,
+ * not a narrowing filter. `nights` is the multiplier used for the stay total.
+ */
+export const NIGHT_OPTIONS: { id: string; label: string; nights: number }[] = [
+  { id: "1", label: "1 night", nights: 1 },
+  { id: "2", label: "2 nights", nights: 2 },
+  { id: "3plus", label: "3+ nights", nights: 3 },
+];
+
+/** Largest party the booking flow handles in one request. */
+export const MAX_PARTY_SIZE = 20;
+
+/** Bands apply to the stay total (per-night × nights), `min` inclusive / `max` exclusive. */
+export const ROOM_PRICE_OPTIONS: { id: string; label: string; min: number; max: number }[] = [
+  { id: "under-5k", label: "Under ₹5k", min: 0, max: 5000 },
+  { id: "5k-10k", label: "₹5k – ₹10k", min: 5000, max: 10000 },
+  { id: "10k-plus", label: "₹10k+", min: 10000, max: Infinity },
+];
+
+export const TIER_OPTIONS: { id: RoomTier; label: string }[] = [
+  { id: "budget", label: "Budget" },
+  { id: "premium", label: "Premium" },
+];
+
+/**
+ * How many of this room a party needs. A room only holds `maxGuests`, so a larger
+ * party is split across multiples of the same room type — 10 guests is 5 budget
+ * rooms (sleeping 2 each) or 3 of a premium room that sleeps 4.
+ *
+ * Uses the room's own `maxGuests` rather than the tier cap, because premium rooms
+ * are not uniform: the Honeymoon Suite sleeps 2, so 10 guests needs 5 of it, not 3.
+ */
+export function roomsNeededFor(room: Room, guests: number): number {
+  return Math.max(1, Math.ceil(Math.max(1, guests) / room.maxGuests));
+}
+
+/** Tariff for one room across the stay. Room-only — excludes taxes and add-ons. */
+export function roomStayTotal(room: Room, nights: number): number {
+  return room.pricePerNight * Math.max(1, nights);
+}
+
+/** Tariff for every room the party needs, across the stay. */
+export function stayTotal(room: Room, nights: number, guests: number): number {
+  return roomStayTotal(room, nights) * roomsNeededFor(room, guests);
+}
+
 export function getRoomsByTier(tier: RoomTier): Room[] {
   return tier === "budget" ? budgetRooms : premiumRooms;
 }
