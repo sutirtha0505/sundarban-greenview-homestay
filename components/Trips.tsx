@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from "next/link";
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import SectionHeading from "./SectionHeading";
 import { tripsData } from "@/lib/data/trips";
 
 export default function Trips() {
+  const router = useRouter();
   const [startIndex, setStartIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
@@ -131,9 +133,8 @@ export default function Trips() {
 
                   <div className="mt-auto">
                     <button 
-                      className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#6DA003] cursor-pointer ${
-                        'bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group'
-                      }`}
+                      onClick={() => router.push(`/booking?trip=${trip.slug}`)}
+                      className="w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#6DA003] cursor-pointer bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group"
                     >
                       View Details
                       <svg 

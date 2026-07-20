@@ -171,7 +171,7 @@ export default function TripsFilterGrid({ trips }: { trips: Trip[] }) {
                     <p className="text-[12px] text-[#666666]">/ per person</p>
                   </div>
                   <Link
-                    href={`/trips/${trip.slug}`}
+                    href={`/booking?trip=${trip.slug}`}
                     className="inline-flex rounded-full border border-[#6DA003] px-4 py-2 text-sm font-semibold text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white"
                   >
                     View Details
