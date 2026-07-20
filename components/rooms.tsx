@@ -7,92 +7,19 @@ import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import {
+  budgetRooms,
+  premiumRooms,
+  formatINR,
+  type Room,
+  type RoomTier,
+} from "@/lib/data/rooms";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
 }
 
-/* ─────────────────────────────────────────────
-   Data
-───────────────────────────────────────────── */
-const budgetRooms = [
-  {
-    id: "b1",
-    title: "Budget Cozy Room",
-    description:
-      "A warm and intimate room tucked within the mangrove edge. Perfect for solo travellers or couples seeking peace and simplicity without sacrificing comfort.",
-    image: "/images/rooms/image1.jpg",
-  },
-  {
-    id: "b2",
-    title: "Budget Standard Room",
-    description:
-      "Our most popular budget pick — spacious, clean, and thoughtfully arranged to give you a restful stay after a long day of Sundarbans exploration.",
-    image: "/images/rooms/image5.jpg",
-  },
-  {
-    id: "b3",
-    title: "Budget Essential Room",
-    description:
-      "Everything you need, nothing you don't. A no-fuss, comfortable room designed for the modern eco-traveller who values experiences over extras.",
-    image: "/images/rooms/image6.jpg",
-  },
-  {
-    id: "b4",
-    title: "Budget Garden View",
-    description:
-      "Wake up to lush greenery right outside your window. This budget gem offers a serene garden outlook at an unbeatable price.",
-    image: "/images/rooms/image7.jpg",
-  },
-  {
-    id: "b5",
-    title: "Budget Twin Retreat",
-    description:
-      "Ideal for friends or family sharing — two comfortable beds, ample storage, and a relaxed atmosphere that feels like a home away from home.",
-    image: "/images/rooms/image8.jpg",
-  },
-];
-
-const premiumRooms = [
-  {
-    id: "p1",
-    title: "Premium Jungle Suite",
-    description:
-      "Immerse yourself in the wild without sacrificing luxury. Floor-to-ceiling views, premium linens, and a private balcony overlooking the mangroves.",
-    image: "/images/rooms/image2.jpg",
-  },
-  {
-    id: "p2",
-    title: "Premium River View",
-    description:
-      "Fall asleep to the soft sound of flowing water. This suite offers panoramic river vistas paired with elegant furnishings for a truly memorable stay.",
-    image: "/images/rooms/image3.jpg",
-  },
-  {
-    id: "p3",
-    title: "Premium Heritage Room",
-    description:
-      "Inspired by the rich heritage of Bengal, this room blends traditional craftsmanship with modern comforts for a culturally immersive retreat.",
-    image: "/images/rooms/image4.jpg",
-  },
-  {
-    id: "p4",
-    title: "Premium Canopy Loft",
-    description:
-      "Perched high with a bird's-eye perspective of the treetops — a unique loft experience that brings the forest to your doorstep.",
-    image: "/images/rooms/image9.jpg",
-  },
-  {
-    id: "p5",
-    title: "Premium Honeymoon Suite",
-    description:
-      "A romantic haven crafted for two. Draped in warm hues, with a private jacuzzi and curated amenities that make every moment unforgettable.",
-    image: "/images/rooms/image10.jpg",
-  },
-];
-
-type Tab = "budget" | "premium";
-type Room = (typeof budgetRooms)[0];
+type Tab = RoomTier;
 
 /* ─────────────────────────────────────────────
    Card Component
@@ -148,12 +75,28 @@ function RoomCard({
             flex: 1,
             overflow: "hidden",
             display: "-webkit-box",
-            WebkitLineClamp: 4,
+            WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
           }}
         >
           {room.description}
         </p>
+
+        {/* Price + occupancy */}
+        <div
+          className="mt-3 flex items-center justify-between gap-2 border-t border-[#6DA003]/15 pt-3"
+          style={{ flexShrink: 0 }}
+        >
+          <div className="text-left">
+            <span className="text-[1.05rem] font-bold leading-none text-[#111111]">
+              {formatINR(room.pricePerNight)}
+            </span>
+            <span className="ml-1 text-[0.65rem] text-gray-400">/ per night</span>
+          </div>
+          <span className="shrink-0 rounded-full border border-[#6DA003]/30 bg-[#6DA003]/5 px-2.5 py-1 text-[0.65rem] font-semibold text-[#6DA003]">
+            Sleeps {room.maxGuests}
+          </span>
+        </div>
 
         <button
           className="mt-4 w-full rounded-full py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 shadow-sm bg-transparent text-[#6DA003] border-2 border-[#6DA003] hover:bg-[#6DA003] hover:text-white cursor-pointer"

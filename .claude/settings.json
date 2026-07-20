@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --experimental-strip-types /tmp/claude-1000/-home-proj-sundarban-greenview-homestay/a60a0134-20bc-46fe-bf31-80f79ec37ac7/scratchpad/r.mjs)"
+    ]
+  }
+}

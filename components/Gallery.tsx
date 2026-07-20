@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import Link from "next/link";
 import DomeGallery from "./DomeGallery";
-import SectionHeading from "./SectionHeading";
 
 function getImagesRecursively(dir: string, baseDir: string = dir): string[] {
     let results: string[] = [];
@@ -29,12 +27,13 @@ export default function Gallery() {
     const images = getImagesRecursively(galleryDir);
 
     return (
-        <div id="gallery" className="w-full min-h-screen flex flex-col justify-center items-center bg-[#FAFAFA] py-12 scroll-mt-28">
-            <div className="mb-4 flex flex-col items-center gap-4">
-                <SectionHeading first="Making" second="Memories Special" />
-                <Link href="/gallery" className="text-sm font-semibold text-[#6DA003] transition-colors hover:text-[#5B8703]">
-                    Full gallery →
-                </Link>
+        <div className="w-full h-screen flex flex-col justify-center items-center bg-[#FAFAFA]">
+            <div className="flex items-center gap-2">
+                <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
+                <h2 className="text-4xl md:text-5xl font-serif">
+                    <span className="text-[#71A129]">Making</span> <span className="text-[#111111]">Memories Special</span>
+                </h2>
+                <div className="h-px w-16 md:w-32 bg-[#71A129]"></div>
             </div>
             <div className="w-full h-full max-h-[80vh] mt-10">
                 <DomeGallery
