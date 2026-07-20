@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { Gloock } from "next/font/google";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,8 +11,6 @@ import { useGSAP } from "@gsap/react";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
 }
-
-const gloock = Gloock({ weight: "400", subsets: ["latin"] });
 
 /* ─────────────────────────────────────────────
    Data
@@ -139,8 +137,7 @@ function RoomCard({
 
       {/* Text */}
       <div className="flex flex-col px-3 pt-6 pb-2" style={{ flex: 1, overflow: "hidden" }}>
-            <h3
-              className="text-[1.3rem] sm:text-[1.4rem] font-bold text-gray-600 mb-2 leading-snug text-center"
+        <h3 className="text-[1.3rem] sm:text-[1.4rem] font-bold text-gray-600 mb-2 leading-snug text-center"
           style={{ flexShrink: 0 }}
         >
           {room.title}
@@ -354,20 +351,17 @@ const Rooms = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
         {/* ── Header ── */}
-        <div className="flex justify-between items-center text-center mb-10">
-          <span className="block h-px w-64 bg-[#6DA003]" />
-
-          <div className="flex justify-between items-center gap-4">
-            <h2
-              className={`text-4xl sm:text-5xl lg:text-[3.4rem] leading-tight tracking-tight text-gray-900 font-[glidaDisplay]`}
-            >
-              Check Our{" "}
-              <span className="text-[#6DA003]">
-                {activeTab === "budget" ? "Budget" : "Premium"} Rooms
-              </span>
+        <div className="mb-10 flex flex-col items-center gap-4 text-center">
+          <div className="flex items-center justify-center gap-4">
+            <span className="block h-px w-16 md:w-32 bg-[#6DA003]" />
+            <h2 className="text-4xl sm:text-5xl lg:text-[3.4rem] leading-tight tracking-tight text-gray-900 font-serif">
+              Check Our <span className="text-[#6DA003]">{activeTab === "budget" ? "Budget" : "Premium"} Rooms</span>
             </h2>
+            <span className="block h-px w-16 md:w-32 bg-[#6DA003]" />
           </div>
-          <span className="block h-px w-64 bg-[#6DA003]" />
+          <Link href="/rooms" className="text-sm font-semibold text-[#6DA003] transition-colors hover:text-[#5B8703]">
+            See all rooms →
+          </Link>
         </div>
 
         {/* ── Tab Toggle ── */}

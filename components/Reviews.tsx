@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import SectionHeading from "./SectionHeading";
 import gsap from "gsap";
@@ -255,8 +256,11 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 export default function Reviews() {
   return (
     <section id="reviews" className="relative w-full min-h-screen py-10 pb-[200px] sm:pb-[160px] lg:pb-10 bg-[#E1E1E1] flex flex-col items-center scroll-mt-28">
-      <div className="z-20">
+      <div className="z-20 flex flex-col items-center gap-4">
         <SectionHeading first="What Our" second="Customers Think" accentSide="right" />
+        <Link href="/reviews" className="text-sm font-semibold text-[#6DA003] transition-colors hover:text-[#5B8703]">
+          Read all reviews →
+        </Link>
       </div>
 
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 relative z-10">

@@ -1,66 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from "next/link";
 import Image from 'next/image';
 import SectionHeading from "./SectionHeading";
-
-const tripsData = [
-  {
-    id: 1,
-    image: "/images/trips/trip1.jpg",
-    pillText: "Night on board | One Day, One Night | Sundarban",
-    durationText: "Sundarban 1 Day, 1 Night",
-    title: "Sundarban Tour: Sajnekhali Bird Sanctuary, Watch Tower, Eco Garden, Hiron Point etc.",
-    rating: "4.5",
-    reviews: "Very Good (2.9k Reviews)",
-    price: "₹ 3,675",
-    buttonType: "outline"
-  },
-  {
-    id: 2,
-    image: "/images/trips/trip2.jpg",
-    pillText: "Night on board | Two Days, Three Nights | Sundarban",
-    durationText: "Sundarban 2 Days, 3 Nights",
-    title: "Sundarban Birdwatching & Riverside Relaxation",
-    rating: "4.5",
-    reviews: "Very Good (2.9k Reviews)",
-    price: "₹ 4,675",
-    buttonType: "outline"
-  },
-  {
-    id: 3,
-    image: "/images/trips/trip3.jpg",
-    pillText: "Night on board | Two Days, Three Nights | Sundarban",
-    durationText: "Sundarban 5 Days, 7 Nights",
-    title: "Sundarban Wildlife Adventure: Deep Forest Exploration",
-    rating: "4.7",
-    reviews: "Very Good (2.9k Reviews)",
-    price: "₹ 5,695",
-    buttonType: "outline"
-  },
-  {
-    id: 4,
-    image: "/images/trips/trip4.jpg",
-    pillText: "Mangrove Safari & Trek | 3 Days, 4 Nights | Sundarban",
-    durationText: "Sundarban 3 Days, 4 Nights",
-    title: "Sundarban Wildlife Trek & Coastal Camping",
-    rating: "4.6",
-    reviews: "Excellent (1.8k Reviews)",
-    price: "₹ 6,995",
-    buttonType: "filled"
-  },
-  {
-    id: 5,
-    image: "/images/trips/trip5.jpg",
-    pillText: "River Cruise & Culture | 4 Days, 5 Nights | Sundarban",
-    durationText: "Sundarban 4 Days, 5 Nights",
-    title: "Sundarban River Journey: Village Life & Birdlife",
-    rating: "4.8",
-    reviews: "Outstanding (3.5k Reviews)",
-    price: "₹ 8,495",
-    buttonType: "filled"
-  }
-];
+import { tripsData } from "@/lib/data/trips";
 
 export default function Trips() {
   const [startIndex, setStartIndex] = useState(0);
@@ -105,8 +49,11 @@ export default function Trips() {
   return (
     <section id="trips" className="w-full md:min-h-screen py-12 md:py-24 bg-[#FFFFFF] scroll-mt-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="mb-8 md:mb-16">
+        <div className="mb-6 md:mb-10 flex flex-col items-center gap-4">
           <SectionHeading first="Book your" second="Trips" />
+          <Link href="/trips" className="text-sm font-semibold text-[#6DA003] transition-colors hover:text-[#5B8703]">
+            View all trips →
+          </Link>
         </div>
 
         {/* Cards Carousel Container */}
@@ -126,7 +73,7 @@ export default function Trips() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {getVisibleTrips().map((trip, idx) => (
               <div 
-                key={`${trip.id}-${idx}`}
+                key={`${trip.slug}-${idx}`}
                 className="bg-[#FFFFFF] border border-[#6DA003] rounded-[32px] p-4 shadow-[0_8px_30px_rgba(109,160,3,0.10)] hover:shadow-[0_12px_40px_rgba(109,160,3,0.16)] transition-shadow duration-300 flex flex-col h-full"
               >
                 {/* Image Container */}
@@ -184,16 +131,14 @@ export default function Trips() {
 
                   <div className="mt-auto">
                     <button 
-                      className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#71A129] cursor-pointer ${
-                        trip.buttonType === 'solid' 
-                          ? 'bg-[#6DA003] text-[#FFFFFF] hover:bg-[#5B8703]' 
-                          : 'bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group'
+                      className={`w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#6DA003] cursor-pointer ${
+                        'bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group'
                       }`}
                     >
                       View Details
                       <svg 
                         width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                        className={`transition-transform ${trip.buttonType === 'outline' ? 'group-hover:translate-x-1' : ''}`}
+                        className="transition-transform group-hover:translate-x-1"
                       >
                         <polyline points="9 18 15 12 9 6"></polyline>
                       </svg>
