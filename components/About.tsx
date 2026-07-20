@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Open_Sans } from "next/font/google";
 
 const openSans = Open_Sans({
@@ -61,9 +62,12 @@ export default function About() {
                             Sundarban with us.
                         </p>
 
-                        <button className="mt-6 md:mt-8 rounded-full bg-[#6DA003] px-10 md:px-12 py-2.5 md:py-3 font-serif text-[18px] md:text-[22px] leading-none text-white">
+                        <Link
+                            href="/about"
+                            className="mt-6 md:mt-8 inline-block rounded-full bg-[#6DA003] px-10 md:px-12 py-2.5 md:py-3 font-serif text-[18px] md:text-[22px] leading-none text-white transition-all hover:bg-[#5a8a02] hover:shadow-[0_0_24px_rgba(109,160,3,0.4)]"
+                        >
                             Read More
-                        </button>
+                        </Link>
                     </div>
 
                     {/* Bottom bento grid */}
@@ -145,9 +149,12 @@ export default function About() {
                                 Sundarban with us.
                             </p>
 
-                            <button className="mt-8 rounded-full bg-[#6DA003] px-12 py-3 font-serif text-[24px] leading-none text-white">
+                            <Link
+                                href="/about"
+                                className="mt-8 inline-block rounded-full bg-[#6DA003] px-12 py-3 font-serif text-[24px] leading-none text-white transition-all hover:bg-[#5a8a02] hover:shadow-[0_0_28px_rgba(109,160,3,0.45)]"
+                            >
                                 Read More
-                            </button>
+                            </Link>
                         </div>
 
                         <div className="grid h-full grid-cols-2 gap-[4px]">
