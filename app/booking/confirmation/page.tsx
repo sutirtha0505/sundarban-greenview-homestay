@@ -1,11 +1,13 @@
 import Link from "next/link";
 
-export default function BookingConfirmationPage({
+// In Next 16 `searchParams` is a Promise and must be awaited.
+export default async function BookingConfirmationPage({
   searchParams,
 }: {
-  searchParams?: { ref?: string; trip?: string };
+  searchParams: Promise<{ ref?: string; trip?: string }>;
 }) {
-  const reference = searchParams?.ref ?? "GVH-2846";
+  const { ref } = await searchParams;
+  const reference = ref ?? "GVH-2846";
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] px-4 py-28 text-[#111111] sm:px-6 lg:px-8">

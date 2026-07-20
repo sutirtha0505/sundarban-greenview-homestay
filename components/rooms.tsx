@@ -98,12 +98,16 @@ function RoomCard({
           </span>
         </div>
 
-        <button
-          className="mt-4 w-full rounded-full py-2.5 text-sm font-semibold tracking-wide transition-all duration-300 shadow-sm bg-transparent text-[#6DA003] border-2 border-[#6DA003] hover:bg-[#6DA003] hover:text-white cursor-pointer"
+        <Link
+          href={`/rooms/booking?room=${room.slug}`}
+          // The card wrapper owns a click handler that rotates the carousel —
+          // don't let a deliberate CTA click also spin the arc.
+          onClick={(e) => e.stopPropagation()}
+          className="mt-4 block w-full rounded-full py-2.5 text-center text-sm font-semibold tracking-wide transition-all duration-300 shadow-sm bg-transparent text-[#6DA003] border-2 border-[#6DA003] hover:bg-[#6DA003] hover:text-white cursor-pointer"
           style={{ flexShrink: 0 }}
         >
           View Details
-        </button>
+        </Link>
       </div>
     </div>
   );
@@ -230,21 +234,30 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
       </svg>
 
       {/* Cards */}
-      {rooms.map((room, idx) => (
-        <div 
-          key={room.id} 
-          className="room-arc-card absolute top-0 left-0 w-[280px] sm:w-[320px] origin-center cursor-pointer" 
-          onClick={() => {
-            let diff = idx - center;
-            if (diff > n / 2) diff -= n;
-            if (diff < -n / 2) diff += n;
-            if (diff === 1) navigate("right");
-            if (diff === -1) navigate("left");
-          }}
-        >
-          <RoomCard room={room} isActive={idx === center} />
-        </div>
-      ))}
+      {rooms.map((room, idx) => {
+        let diff = idx - center;
+        if (diff > n / 2) diff -= n;
+        if (diff < -n / 2) diff += n;
+        // Cards past ±1 are animated to opacity 0 but still sit on the arc — without
+        // this they would swallow clicks meant for the visible cards underneath.
+        const isVisible = Math.abs(diff) <= 1;
+
+        return (
+          <div
+            key={room.id}
+            className={`room-arc-card absolute top-0 left-0 w-[280px] sm:w-[320px] origin-center cursor-pointer ${
+              isVisible ? "" : "pointer-events-none"
+            }`}
+            aria-hidden={!isVisible}
+            onClick={() => {
+              if (diff === 1) navigate("right");
+              if (diff === -1) navigate("left");
+            }}
+          >
+            <RoomCard room={room} isActive={idx === center} />
+          </div>
+        );
+      })}
 
       {/* Navigation Buttons */}
       <div className="absolute top-[60%] -translate-y-1/2 left-0 sm:-left-4 z-20">
