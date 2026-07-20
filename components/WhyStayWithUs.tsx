@@ -1,51 +1,116 @@
-import React from 'react'
-
+import Image from "next/image";
+import Link from "next/link";
+import SectionHeading from "./SectionHeading";
 
 const whyStayCards = [
   {
-    title: "Riverside location",
-    description: "Wake up to river light, mangrove air, and quiet delta mornings.",
+    title: "Riverside Location",
+    description:
+      "Wake up to river light, mangrove air, and quiet delta mornings right at the water's edge.",
+    image: "/images/Choose/RiversideLocation.jpg",
+    pill: "On the Matla River",
+    href: "/about",
   },
   {
-    title: "Home-cooked Bengali meals",
-    description: "Fresh fish, village produce, and comforting meals made in-house.",
+    title: "Home-cooked Bengali Meals",
+    description:
+      "Fresh fish, village produce, and comforting meals made in-house by the family every day.",
+    image: "/images/Choose/HomeCookedBengaliMeals.jpg",
+    pill: "Farm-to-table freshness",
+    href: "/about",
   },
   {
-    title: "Licensed forest guides",
-    description: "Travel deeper with local experts who know the rhythms of the forest.",
+    title: "Licensed Forest Guides",
+    description:
+      "Travel deeper with local experts who know the rhythms of the forest and the tides.",
+    image: "/images/Choose/LicensedForest Guides.jpg",
+    pill: "Govt. certified guides",
+    href: "/about",
   },
   {
-    title: "Family-run",
-    description: "Stay with hosts who treat every visitor like part of the home.",
+    title: "Family-Run",
+    description:
+      "Stay with hosts who treat every visitor like part of the home — because that's exactly what you are.",
+    image: "/images/Choose/FamilyRun.jpg",
+    pill: "3 generations of hospitality",
+    href: "/about",
   },
 ];
 
-const WhyStayWithUs = () => {
+export default function WhyStayWithUs() {
   return (
-    <section className="bg-[#FAFAFA] px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-[32px] border border-[#6DA003]/20 bg-white px-5 py-6 shadow-[0_10px_30px_rgba(109,160,3,0.08)] sm:px-8 sm:py-8">
-          <div className="mb-6 flex items-center justify-center gap-4">
-            <span className="h-px w-12 bg-[#6DA003] sm:w-20" />
-            <p className="text-[11px] uppercase tracking-[0.32em] text-[#6DA003]">Why stay with us</p>
-            <span className="h-px w-12 bg-[#6DA003] sm:w-20" />
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {whyStayCards.map((card) => (
-              <div key={card.title} className="rounded-[24px] border border-[#6DA003]/15 bg-[#FAFAFA] p-5">
-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#6DA003]/10 text-[#6DA003]">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M8 13l2.5 2.5L16 10" />
-                  </svg>
-                </div>
-                <h3 className="text-[15px] font-semibold text-[#111111]">{card.title}</h3>
-                <p className="mt-2 text-[13px] leading-6 text-[#666666]">{card.description}</p>
-              </div>
-            ))}
-          </div>
+    <section id="why-stay" className="w-full bg-[#FAFAFA] py-12 md:py-20 scroll-mt-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
+        <div className="mb-8 md:mb-12 flex flex-col items-center gap-3">
+          <SectionHeading first="Why Stay" second="With Us" />
+          <p className="max-w-xl text-center text-[14px] leading-[1.75] text-[#666666]">
+            Four reasons guests come back to Sundarban Greenview Homestay, year after year.
+          </p>
         </div>
-      </section>
-  )
-}
 
-export default WhyStayWithUs
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 md:gap-8">
+          {whyStayCards.map((card) => (
+            <div
+              key={card.title}
+              className="group bg-[#FFFFFF] border border-[#6DA003] rounded-[32px] p-4 shadow-[0_8px_30px_rgba(109,160,3,0.10)] hover:shadow-[0_12px_40px_rgba(109,160,3,0.16)] transition-shadow duration-300 flex flex-col h-full"
+            >
+              {/* Image */}
+              <div className="relative w-full aspect-4/3 rounded-[24px] overflow-hidden bg-[#F5F5F5]">
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Pill — floats up out of the image */}
+              <div className="flex justify-center -mt-4 relative z-10 mb-4">
+                <div className="bg-[#FFFFFF] border border-[#555555] rounded-full px-4 py-1.5 text-[9px] md:text-[10px] text-[#111111] shadow-sm text-center max-w-full truncate">
+                  {card.pill}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="px-2 pb-2 grow flex flex-col">
+                <h3 className="text-[15px] md:text-[16px] font-bold text-[#888888] leading-tight mb-3 line-clamp-2 min-h-10">
+                  {card.title}
+                </h3>
+
+                <p className="text-[13px] leading-[1.7] text-[#666666] mb-5 grow">
+                  {card.description}
+                </p>
+
+                {/* CTA Button — matches Trips card exactly */}
+                <div className="mt-auto">
+                  <Link
+                    href={card.href}
+                    className="w-full py-3 px-6 rounded-[24px] flex items-center justify-between text-base font-serif transition-colors border border-[#6DA003] bg-[#FFFFFF] text-[#6DA003] hover:bg-[#6DA003] hover:text-[#FFFFFF] group/btn"
+                  >
+                    Learn More
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="transition-transform group-hover/btn:translate-x-1"
+                    >
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

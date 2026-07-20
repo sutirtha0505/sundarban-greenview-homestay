@@ -71,6 +71,7 @@ export default function TripBookingForm() {
     () => (searchParams.get("room") && getRoomBySlug(searchParams.get("room")!)?.slug) || roomsData[0].slug,
   );
   const [form, setForm] = useState(bookingDefaults);
+  const [showPreview, setShowPreview] = useState(false);
 
   const selectedTripData = tripSlug ? tripsData.find((t) => t.slug === tripSlug) ?? null : null;
   const room = getRoomBySlug(roomSlug) ?? roomsData[0];
@@ -91,8 +92,85 @@ export default function TripBookingForm() {
   const advance = nights >= ADVANCE_THRESHOLD_NIGHTS ? ADVANCE_HIGH : ADVANCE_LOW;
   const balance = Math.max(0, totalCost - advance);
 
-  const referenceSeed = `${selectedTripData?.slug ?? "booking"}-${form.departure}-${form.firstName}-${form.phone}`;
-  const generatedReference = `GVH-${1000 + (Array.from(referenceSeed).reduce((a, c) => a + c.charCodeAt(0), 0) % 9000)}`;
+  // ── Build the polished booking enquiry message ────────────────────────────
+  const buildBookingMessage = () => {
+    const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
+    const divider = "────────────────────────────────";
+
+    const fmt = (label: string, value: string) => `  ${label}: ${value}`;
+
+    const lines: string[] = [
+      `Hi, I'm ${fullName} and I'd like to enquire about booking a stay at Sundarban Greenview Homestay.`,
+      ``,
+      `Please find my booking details below.`,
+      ``,
+      divider,
+      `  TRIP PACKAGE`,
+      divider,
+      fmt("Package", selectedTripData?.title ?? "—"),
+      fmt("Duration", selectedTripData?.durationText ?? "—"),
+      fmt("Price per person", selectedTripData?.price ?? "—"),
+      ``,
+      divider,
+      `  ACCOMMODATION`,
+      divider,
+      fmt("Room type", `${room.title} (${room.tier})`),
+      fmt("Rate", `${formatINR(room.pricePerNight)} per night`),
+      ``,
+      divider,
+      `  TRAVEL DETAILS`,
+      divider,
+      fmt("Check-in", form.departure),
+      fmt("Check-out", form.returnDate),
+      fmt("Duration", `${nights} night${nights === 1 ? "" : "s"}`),
+      fmt("Guests", `${guests} guest${guests === 1 ? "" : "s"}`),
+      fmt("Rooms required", `${roomsRequired} room${roomsRequired === 1 ? "" : "s"}`),
+      fmt("Pickup", PICKUP_OPTIONS.find((o) => o.value === pickup)?.label ?? pickup),
+      ``,
+      divider,
+      `  PRICE SUMMARY`,
+      divider,
+      fmt("Trip package", selectedTripData ? `${selectedTripData.price} × ${guests} = ${formatINR(packageSubtotal)}` : "—"),
+      fmt("Accommodation", `${formatINR(room.pricePerNight)} × ${nights}n × ${roomsRequired}r = ${formatINR(accommodationCost)}`),
+      fmt("Activities & add-ons", formatINR(activitiesCost)),
+      fmt("Taxes & fees", formatINR(TAXES)),
+      `  ` + "─".repeat(30),
+      fmt("Total", selectedTripData ? formatINR(totalCost) : "—"),
+      fmt("Advance payable now", formatINR(advance)),
+      fmt("Balance on arrival", selectedTripData ? formatINR(balance) : "—"),
+    ];
+
+    // Contact details
+    if (form.email || form.phone) {
+      lines.push(``, divider, `  CONTACT`, divider);
+      if (form.email) lines.push(fmt("Email", form.email));
+      if (form.phone) lines.push(fmt("Phone", form.phone));
+    }
+
+    // Special requests
+    if (form.message.trim()) {
+      lines.push(``, divider, `  SPECIAL REQUESTS`, divider, `  ${form.message.trim()}`);
+    }
+
+    lines.push(``, divider);
+    lines.push(`Thank you for considering my enquiry. Please confirm availability at your earliest convenience.`);
+    lines.push(``, `— ${fullName}`);
+
+    return lines.join("\n");
+  };
+
+
+  const emailHref = () => {
+    const msg = buildBookingMessage();
+    const subject = encodeURIComponent(`Booking Enquiry – ${form.firstName} ${form.lastName}`);
+    const body = encodeURIComponent(msg);
+    return `https://mail.google.com/mail/?view=cm&to=greenviewhomestay@gmail.com&su=${subject}&body=${body}`;
+  };
+
+  const whatsappHref = () => {
+    const msg = buildBookingMessage();
+    return `https://wa.me/917679756846?text=${encodeURIComponent(msg)}`;
+  };
 
   const updateField = (key: keyof typeof bookingDefaults, value: string) =>
     setForm((cur) => ({ ...cur, [key]: value }));
@@ -510,19 +588,19 @@ export default function TripBookingForm() {
           </div>
         </div>
 
-        {/* ── Step 4: Submit ── */}
+        {/* ── Step 4: Review ── */}
         <div className={cardCls}>
           <StepHeading step={4} title="Review and submit" />
           <p className="mt-4 text-sm leading-7 text-[#555555]">
-            Once you submit, we&apos;ll reach out to confirm availability and send your advance
-            payment details.
+            Preview your full booking details before reaching out to confirm.
           </p>
           <button
-            type="submit"
+            type="button"
             disabled={!canSubmit}
+            onClick={() => setShowPreview(true)}
             className="mt-6 rounded-full bg-[#6DA003] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#5B8703] hover:shadow-[0_8px_24px_rgba(109,160,3,0.3)] disabled:cursor-not-allowed disabled:bg-[#C4C4C4] disabled:shadow-none cursor-pointer"
           >
-            Review booking — {formatINR(advance)} advance
+            Review Booking — {formatINR(advance)} advance
           </button>
           {blockedReason ? (
             <p className="mt-3 text-[12px] text-[#888888]">{blockedReason}</p>
@@ -624,31 +702,215 @@ export default function TripBookingForm() {
           </div>
         </div>
 
-        {/* Reference */}
-        <div className="mt-5 rounded-[20px] bg-[#FAFAFA] p-5 text-sm text-[#444444]">
-          <p className="text-[11px] uppercase tracking-[0.24em] text-[#6DA003]">Reference number</p>
-          <p className="mt-2 text-2xl font-semibold text-[#111111]">{generatedReference}</p>
-          <p className="mt-1 text-[12px]">
-            Your reference will appear on the confirmation screen after submission.
-          </p>
-        </div>
-
         {/* Contact CTAs */}
         <div className="mt-5 flex flex-col gap-3">
-          <Link
-            href="mailto:greenviewhomestay@gmail.com"
-            className="rounded-full bg-[#6DA003] px-5 py-3 text-center text-sm font-semibold text-white transition-all hover:bg-[#5B8703]"
+          {!canSubmit && (
+            <p className="rounded-[16px] bg-white/10 px-4 py-3 text-[12px] leading-5 text-white/50">
+              {blockedReason}
+            </p>
+          )}
+          <a
+            href={canSubmit ? emailHref() : undefined}
+            onClick={!canSubmit ? (e) => e.preventDefault() : undefined}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-disabled={!canSubmit}
+            className={`rounded-full px-5 py-3 text-center text-sm font-semibold transition-all ${canSubmit
+                ? "bg-[#6DA003] text-white hover:bg-[#5B8703] hover:shadow-[0_6px_20px_rgba(109,160,3,0.35)] cursor-pointer"
+                : "cursor-not-allowed bg-[#6DA003]/40 text-white/50"
+              }`}
           >
-            Confirm by email
-          </Link>
-          <Link
-            href="https://wa.me/917679756846"
-            className="rounded-full border border-[#C5FE4E] px-5 py-3 text-center text-sm font-semibold text-white transition-all hover:bg-[#C5FE4E] hover:text-[#111111]"
+            ✉&nbsp; Confirm by Email
+          </a>
+          <a
+            href={canSubmit ? whatsappHref() : undefined}
+            onClick={!canSubmit ? (e) => e.preventDefault() : undefined}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-disabled={!canSubmit}
+            className={`rounded-full border px-5 py-3 text-center text-sm font-semibold transition-all ${canSubmit
+                ? "border-[#C5FE4E] text-white hover:bg-[#C5FE4E] hover:text-[#111111] cursor-pointer"
+                : "cursor-not-allowed border-white/20 text-white/40"
+              }`}
           >
-            Ask on WhatsApp
-          </Link>
+            💬&nbsp; Ask on WhatsApp
+          </a>
         </div>
       </aside>
+      {/* ── Booking Preview Modal ── */}
+      {showPreview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPreview(false)}
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-[#0C0000]/80 backdrop-blur-sm" />
+
+          {/* Modal card */}
+          <div
+            className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[32px] bg-[#111111] shadow-[0_32px_80px_rgba(0,0,0,0.6)] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-[32px] bg-[#111111] px-7 pt-7 pb-5 border-b border-white/8">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.36em] text-[#6DA003]">Booking Preview</p>
+                <h2 className="mt-1 font-serif text-[22px] text-white leading-tight">
+                  {form.firstName} {form.lastName}
+                </h2>
+              </div>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-all hover:border-white/40 hover:text-white cursor-pointer"
+                aria-label="Close preview"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="px-7 py-6 space-y-5">
+
+              {/* Package */}
+              <div className="rounded-[20px] bg-white/5 p-5">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-3">Trip Package</p>
+                <p className="text-[17px] font-semibold text-white leading-snug">{selectedTripData?.title ?? "—"}</p>
+                <p className="mt-1 text-[13px] text-white/50">{selectedTripData?.durationText}</p>
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <span className="text-[22px] font-bold text-white">{selectedTripData?.price ?? "—"}</span>
+                  <span className="text-[12px] text-white/40">per person × {guests} = <span className="text-white/70 font-semibold">{selectedTripData ? formatINR(packageSubtotal) : "—"}</span></span>
+                </div>
+              </div>
+
+              {/* Room */}
+              <div className="rounded-[20px] bg-white/5 p-5">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-3">Accommodation</p>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[15px] font-semibold text-white">{room.title}</p>
+                    <p className="mt-1 text-[12px] text-white/50">{room.tier} · sleeps {room.maxGuests} per room</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-[15px] font-semibold text-white">{formatINR(accommodationCost)}</p>
+                    <p className="mt-1 text-[11px] text-white/40">{roomsRequired}r × {nights}n × {formatINR(room.pricePerNight)}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dates & Guests */}
+              <div className="rounded-[20px] bg-white/5 p-5">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-3">Travel Details</p>
+                <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+                  {[
+                    ["Check-in", form.departure],
+                    ["Check-out", form.returnDate],
+                    ["Duration", `${nights} night${nights === 1 ? "" : "s"}`],
+                    ["Guests", `${guests} guest${guests === 1 ? "" : "s"}`],
+                    ["Rooms", `${roomsRequired} room${roomsRequired === 1 ? "" : "s"}`],
+                    ["Pickup", pickup === "none" ? "Self-arranged" : pickup === "godkhali" ? "Godkhali Jetty" : "Other location"],
+                  ].map(([label, value]) => (
+                    <div key={label}>
+                      <p className="text-[10px] text-white/40 uppercase tracking-wider">{label}</p>
+                      <p className="mt-0.5 text-[13px] font-medium text-white/85">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price breakdown */}
+              <div className="rounded-[20px] bg-white/5 p-5">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-4">Price Breakdown</p>
+                <div className="space-y-2.5">
+                  {[
+                    ["Trip package", selectedTripData ? formatINR(packageSubtotal) : "—"],
+                    ["Accommodation", formatINR(accommodationCost)],
+                    ["Activities & add-ons", formatINR(activitiesCost)],
+                    ["Taxes & fees", formatINR(TAXES)],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-center justify-between text-[13px]">
+                      <span className="text-white/55">{label}</span>
+                      <span className="font-medium text-white/85">{value}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 border-t border-white/10 pt-4">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[13px] text-white/60">Total</span>
+                    <span className="text-[22px] font-bold text-white">{selectedTripData ? formatINR(totalCost) : "—"}</span>
+                  </div>
+                </div>
+                {/* Advance highlight */}
+                <div className="mt-3 flex items-center justify-between rounded-[14px] bg-[#C5FE4E]/12 px-4 py-3">
+                  <div>
+                    <p className="text-[11px] text-[#C5FE4E] font-semibold uppercase tracking-wider">Advance payable now</p>
+                    <p className="text-[11px] text-white/35 mt-0.5">Balance {selectedTripData ? formatINR(balance) : "—"} on arrival</p>
+                  </div>
+                  <span className="text-[20px] font-bold text-[#C5FE4E]">{formatINR(advance)}</span>
+                </div>
+              </div>
+
+              {/* Contact */}
+              {(form.email || form.phone) && (
+                <div className="rounded-[20px] bg-white/5 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-3">Your Contact</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {form.email && (
+                      <div>
+                        <p className="text-[10px] text-white/40 uppercase tracking-wider">Email</p>
+                        <p className="mt-0.5 text-[13px] text-white/80 break-all">{form.email}</p>
+                      </div>
+                    )}
+                    {form.phone && (
+                      <div>
+                        <p className="text-[10px] text-white/40 uppercase tracking-wider">Phone</p>
+                        <p className="mt-0.5 text-[13px] text-white/80">{form.phone}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Special requests */}
+              {form.message.trim() && (
+                <div className="rounded-[20px] bg-white/5 p-5">
+                  <p className="text-[10px] uppercase tracking-[0.32em] text-[#6DA003] mb-2">Special Requests</p>
+                  <p className="text-[13px] leading-[1.7] text-white/65">{form.message}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer CTAs */}
+            <div className="sticky bottom-0 rounded-b-[32px] bg-[#111111] border-t border-white/8 px-7 py-5 flex flex-col gap-3">
+              <a
+                href={emailHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full rounded-full bg-[#6DA003] py-3.5 text-center text-[14px] font-semibold text-white transition-all hover:bg-[#5B8703] hover:shadow-[0_6px_20px_rgba(109,160,3,0.4)] cursor-pointer"
+              >
+                ✉&nbsp; Confirm by Email
+              </a>
+              <a
+                href={whatsappHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full rounded-full border border-[#C5FE4E] py-3.5 text-center text-[14px] font-semibold text-white transition-all hover:bg-[#C5FE4E] hover:text-[#111111] cursor-pointer"
+              >
+                💬&nbsp; Ask on WhatsApp
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowPreview(false)}
+                className="text-[12px] text-white/35 hover:text-white/60 transition-colors cursor-pointer"
+              >
+                ← Edit booking
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
