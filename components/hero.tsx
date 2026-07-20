@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Gloock } from "next/font/google";
 
 const gloock = Gloock({
@@ -99,7 +100,7 @@ export default function HeroPage() {
         </div>
 
         <div className="mt-4 sm:mt-6 flex w-full flex-col items-start gap-8 md:flex-row md:items-end">
-          <button className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-[#6DA003] px-8 py-3.5 text-lg text-white transition-all hover:bg-[#5B8703] border border-[#8FCE05] shadow-[0_10px_24px_rgba(109,160,3,0.24)]">
+          <Link href="/booking" className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-[#6DA003] px-8 py-3.5 text-lg text-white transition-all hover:bg-[#5B8703] border border-[#8FCE05] shadow-[0_10px_24px_rgba(109,160,3,0.24)]">
             <span className="relative z-10 font-medium">Book your Trip</span>
             <svg
               className="relative z-10 h-5 w-5"
@@ -114,7 +115,7 @@ export default function HeroPage() {
               <polyline points="15 3 21 3 21 9"></polyline>
               <line x1="10" y1="14" x2="21" y2="3"></line>
             </svg>
-          </button>
+          </Link>
         </div>
 
         {/* Room Cards Carousel */}
