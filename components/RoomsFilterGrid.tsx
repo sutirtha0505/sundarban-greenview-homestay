@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,6 +12,7 @@ import {
   roomStayTotal,
   roomsNeededFor,
   stayTotal,
+  fetchLiveRooms,
   type Room,
   type RoomTier,
 } from "@/lib/data/rooms";
@@ -148,18 +149,29 @@ function FilterGroup<T extends string>({
   );
 }
 
-export default function RoomsFilterGrid({ rooms }: { rooms: Room[] }) {
+export default function RoomsFilterGrid({ rooms: initialRooms }: { rooms?: Room[] }) {
+  const [liveRooms, setLiveRooms] = useState<Room[]>(initialRooms || []);
   const [nightId, setNightId] = useState(DEFAULT_NIGHTS);
   const [guests, setGuests] = useState(DEFAULT_GUESTS);
   const [priceBands, setPriceBands] = useState<string[]>([]);
   const [tiers, setTiers] = useState<RoomTier[]>([]);
   const [visible, setVisible] = useState(PAGE_SIZE);
 
+  useEffect(() => {
+    fetchLiveRooms().then((data) => {
+      if (data && data.length > 0) {
+        setLiveRooms(data);
+      }
+    });
+  }, []);
+
+  const roomsToUse = liveRooms.length > 0 ? liveRooms : (initialRooms || []);
+
   const nights = NIGHT_OPTIONS.find((o) => o.id === nightId)?.nights ?? 1;
   const isNightsOpenEnded = nightId === "3plus";
 
   const filtered = useMemo(() => {
-    return rooms.filter((room) => {
+    return roomsToUse.filter((room) => {
       if (tiers.length && !tiers.includes(room.tier)) return false;
 
       // Party size no longer excludes a room — it multiplies how many are booked,
@@ -174,7 +186,7 @@ export default function RoomsFilterGrid({ rooms }: { rooms: Room[] }) {
 
       return true;
     });
-  }, [rooms, guests, tiers, priceBands, nights]);
+  }, [roomsToUse, guests, tiers, priceBands, nights]);
 
   const shown = filtered.slice(0, visible);
   const remaining = filtered.length - shown.length;

@@ -5,13 +5,22 @@ import Link from "next/link";
 import CachedImage from './CachedImage';
 import { useRouter } from 'next/navigation';
 import SectionHeading from "./SectionHeading";
-import { tripsData } from "@/lib/data/trips";
+import { tripsData, fetchLiveTrips, type Trip } from "@/lib/data/trips";
 
 export default function Trips() {
   const router = useRouter();
+  const [tripsList, setTripsList] = useState<Trip[]>(tripsData);
   const [startIndex, setStartIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+
+  useEffect(() => {
+    fetchLiveTrips().then((data) => {
+      if (data && data.length > 0) {
+        setTripsList(data);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const check = () => {
@@ -27,19 +36,22 @@ export default function Trips() {
   const getVisibleTrips = () => {
     const count = isMobile ? 1 : isTablet ? 2 : 3;
     const visible = [];
+    const list = tripsList.length > 0 ? tripsList : tripsData;
     for (let i = 0; i < count; i++) {
-      visible.push(tripsData[(startIndex + i) % tripsData.length]);
+      visible.push(list[(startIndex + i) % list.length]);
     }
     return visible;
   };
 
   const handleNext = useCallback(() => {
-    setStartIndex((prev) => (prev + 1) % tripsData.length);
-  }, []);
+    const len = tripsList.length || 1;
+    setStartIndex((prev) => (prev + 1) % len);
+  }, [tripsList.length]);
 
   const handlePrev = useCallback(() => {
-    setStartIndex((prev) => (prev - 1 + tripsData.length) % tripsData.length);
-  }, []);
+    const len = tripsList.length || 1;
+    setStartIndex((prev) => (prev - 1 + len) % len);
+  }, [tripsList.length]);
 
   useEffect(() => {
     const interval = setInterval(() => {

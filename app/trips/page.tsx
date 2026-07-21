@@ -1,9 +1,22 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
 import TripsFilterGrid from "@/components/TripsFilterGrid";
-import { tripsData } from "@/lib/data/trips";
+import { tripsData, fetchLiveTrips, type Trip } from "@/lib/data/trips";
 
 export default function TripsIndexPage() {
+  const [trips, setTrips] = useState<Trip[]>(tripsData);
+
+  useEffect(() => {
+    fetchLiveTrips().then((data) => {
+      if (data && data.length > 0) {
+        setTrips(data);
+      }
+    });
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#FAFAFA] pt-28 text-[#111111]">
       <section className="px-4 pb-12 sm:px-6 lg:px-8">
@@ -13,7 +26,7 @@ export default function TripsIndexPage() {
             Choose the Sundarbans escape that fits your pace, your group, and your budget.
           </p>
 
-          <TripsFilterGrid trips={tripsData} />
+          <TripsFilterGrid trips={trips} />
 
           <div className="mt-12 overflow-hidden rounded-[32px] border border-[#6DA003]/20 bg-[#111111] px-6 py-8 text-white shadow-[0_12px_40px_rgba(17,17,17,0.16)] sm:px-8">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -42,7 +55,7 @@ export default function TripsIndexPage() {
                 </tr>
               </thead>
               <tbody>
-                {tripsData.map((trip) => (
+                {trips.map((trip) => (
                   <tr key={trip.slug} className="border-t border-[#6DA003]/10 align-top">
                     <td className="px-5 py-4 font-semibold text-[#111111]">{trip.durationText}</td>
                     <td className="px-5 py-4 text-[#555555]">{trip.includes.join(", ")}</td>

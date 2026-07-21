@@ -216,3 +216,34 @@ export function getRoomsByTier(tier: RoomTier): Room[] {
 export function getRoomBySlug(slug: string): Room | undefined {
   return roomsData.find((room) => room.slug === slug);
 }
+
+import { supabase } from "@/lib/supabase/client";
+
+export async function fetchLiveRooms(): Promise<Room[]> {
+  try {
+    const { data, error } = await supabase
+      .from("rooms")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return roomsData;
+    }
+
+    return data.map((item: any) => ({
+      id: item.id || item.slug,
+      slug: item.slug,
+      tier: item.tier as RoomTier,
+      title: item.title,
+      description: item.description || "",
+      image: getStorageImageUrl(item.hero_image || item.image || "/images/rooms/image1.jpg"),
+      pricePerNight: Number(item.price_per_night),
+      maxGuests: Number(item.max_guests),
+    }));
+  } catch (err) {
+    console.error("Error fetching live rooms from Supabase:", err);
+    return roomsData;
+  }
+}
+

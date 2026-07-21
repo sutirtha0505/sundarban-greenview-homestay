@@ -116,3 +116,39 @@ export const tripsData: Trip[] = [
     excludes: ["GST", "Forest permit", "Premium beverage service"],
   },
 ];
+
+import { supabase } from "@/lib/supabase/client";
+
+export async function fetchLiveTrips(): Promise<Trip[]> {
+  try {
+    const { data, error } = await supabase
+      .from("trips")
+      .select("*, trip_inclusions(item), trip_exclusions(item)")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return tripsData;
+    }
+
+    return data.map((item: any) => ({
+      slug: item.slug,
+      image: getStorageImageUrl(item.hero_image || item.image || "/images/trips/trip1.jpg"),
+      pillText: item.pill_text || "Night on board | One Day, One Night | Sundarban",
+      durationText: item.duration_text || `${item.days} Days, ${item.nights} Nights`,
+      title: item.title,
+      rating: String(item.rating || "4.5"),
+      reviews: `${item.rating_label || "Very Good"} (${item.review_count || 100} Reviews)`,
+      price: item.price_display || `₹ ${Number(item.price_per_person).toLocaleString("en-IN")}`,
+      priceValue: Number(item.price_per_person),
+      groupType: item.group_type as GroupType,
+      durationBand: item.duration_band as DurationBand,
+      includes: item.trip_inclusions?.map((i: any) => i.item) || [],
+      excludes: item.trip_exclusions?.map((e: any) => e.item) || [],
+    }));
+  } catch (err) {
+    console.error("Error fetching live trips from Supabase:", err);
+    return tripsData;
+  }
+}
+

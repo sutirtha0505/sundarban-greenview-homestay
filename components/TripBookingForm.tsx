@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { tripsData } from "@/lib/data/trips";
+import { tripsData, fetchLiveTrips, type Trip } from "@/lib/data/trips";
 import {
   MAX_PARTY_SIZE,
   budgetRooms,
@@ -14,6 +14,8 @@ import {
   getRoomBySlug,
   roomsData,
   roomsNeededFor,
+  fetchLiveRooms,
+  type Room,
 } from "@/lib/data/rooms";
 
 const ACTIVITIES_WITH_PICKUP = 1250;
@@ -64,6 +66,8 @@ export default function TripBookingForm() {
   const searchParams = useSearchParams();
   const tripSlug = searchParams.get("trip");
 
+  const [allTrips, setAllTrips] = useState<Trip[]>(tripsData);
+  const [allRooms, setAllRooms] = useState<Room[]>(roomsData);
   const [guests, setGuests] = useState(2);
   const [pickup, setPickup] = useState("godkhali");
   const [roomSlug, setRoomSlug] = useState(
@@ -72,8 +76,25 @@ export default function TripBookingForm() {
   const [form, setForm] = useState(bookingDefaults);
   const [showPreview, setShowPreview] = useState(false);
 
-  const selectedTripData = tripSlug ? tripsData.find((t) => t.slug === tripSlug) ?? null : null;
-  const room = getRoomBySlug(roomSlug) ?? roomsData[0];
+  useEffect(() => {
+    fetchLiveTrips().then((data) => {
+      if (data && data.length > 0) {
+        setAllTrips(data);
+      }
+    });
+    fetchLiveRooms().then((data) => {
+      if (data && data.length > 0) {
+        setAllRooms(data);
+      }
+    });
+  }, []);
+
+  const selectedTripData = tripSlug
+    ? allTrips.find((t) => t.slug === tripSlug) ?? tripsData.find((t) => t.slug === tripSlug) ?? null
+    : null;
+  const room = allRooms.find((r) => r.slug === roomSlug) ?? roomsData[0];
+  const liveBudgetRooms = allRooms.filter((r) => r.tier === "budget");
+  const livePremiumRooms = allRooms.filter((r) => r.tier === "premium");
 
   const d1 = new Date(form.departure);
   const d2 = new Date(form.returnDate);
@@ -315,14 +336,14 @@ export default function TripBookingForm() {
               className={`${inputCls} cursor-pointer appearance-none`}
             >
               <optgroup label="Budget">
-                {budgetRooms.map((r) => (
+                {(liveBudgetRooms.length > 0 ? liveBudgetRooms : budgetRooms).map((r) => (
                   <option key={r.slug} value={r.slug}>
                     {r.title} — {formatINR(r.pricePerNight)}/night · sleeps {r.maxGuests}
                   </option>
                 ))}
               </optgroup>
               <optgroup label="Premium">
-                {premiumRooms.map((r) => (
+                {(livePremiumRooms.length > 0 ? livePremiumRooms : premiumRooms).map((r) => (
                   <option key={r.slug} value={r.slug}>
                     {r.title} — {formatINR(r.pricePerNight)}/night · sleeps {r.maxGuests}
                   </option>

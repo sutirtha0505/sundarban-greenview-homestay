@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   DURATION_OPTIONS,
   GROUP_OPTIONS,
   PRICE_OPTIONS,
+  fetchLiveTrips,
   type DurationBand,
   type GroupType,
   type Trip,
@@ -57,17 +58,28 @@ function FilterGroup<T extends string>({
   );
 }
 
-export default function TripsFilterGrid({ trips }: { trips: Trip[] }) {
+export default function TripsFilterGrid({ trips: initialTrips }: { trips?: Trip[] }) {
+  const [liveTrips, setLiveTrips] = useState<Trip[]>(initialTrips || []);
   const [durations, setDurations] = useState<DurationBand[]>([]);
   const [priceBands, setPriceBands] = useState<string[]>([]);
   const [groupTypes, setGroupTypes] = useState<GroupType[]>([]);
+
+  useEffect(() => {
+    fetchLiveTrips().then((data) => {
+      if (data && data.length > 0) {
+        setLiveTrips(data);
+      }
+    });
+  }, []);
+
+  const tripsToUse = liveTrips.length > 0 ? liveTrips : (initialTrips || []);
 
   const activeCount = durations.length + priceBands.length + groupTypes.length;
 
   const filtered = useMemo(() => {
     // Within a group the options are OR'd; across groups they are AND'd.
     // An empty group means "no constraint".
-    return trips.filter((trip) => {
+    return tripsToUse.filter((trip) => {
       if (durations.length && !durations.includes(trip.durationBand)) return false;
       if (groupTypes.length && !groupTypes.includes(trip.groupType)) return false;
 
@@ -80,7 +92,7 @@ export default function TripsFilterGrid({ trips }: { trips: Trip[] }) {
 
       return true;
     });
-  }, [trips, durations, priceBands, groupTypes]);
+  }, [tripsToUse, durations, priceBands, groupTypes]);
 
   const clearAll = () => {
     setDurations([]);
@@ -115,7 +127,7 @@ export default function TripsFilterGrid({ trips }: { trips: Trip[] }) {
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#6DA003]/10 pt-4">
           <p aria-live="polite" className="text-sm text-[#555555]">
             Showing <span className="font-semibold text-[#111111]">{filtered.length}</span> of{" "}
-            {trips.length} trips
+            {tripsToUse.length} trips
           </p>
           {activeCount > 0 ? (
             <button

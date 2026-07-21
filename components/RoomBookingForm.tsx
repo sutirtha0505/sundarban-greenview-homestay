@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +15,8 @@ import {
   roomsNeededFor,
   roomsData,
   stayTotal,
+  fetchLiveRooms,
+  type Room,
 } from "@/lib/data/rooms";
 
 /** Room tariffs under ₹7,500/night attract 12% GST. */
@@ -66,9 +68,23 @@ export default function RoomBookingForm() {
   const initialNights = Number(searchParams.get("nights")) || 1;
   const initialGuests = Number(searchParams.get("guests")) || 2;
 
+  const [allRooms, setAllRooms] = useState<Room[]>(roomsData);
   const [slug, setSlug] = useState(
     () => (initialSlug && getRoomBySlug(initialSlug)?.slug) || roomsData[0].slug,
   );
+
+  useEffect(() => {
+    fetchLiveRooms().then((data) => {
+      if (data && data.length > 0) {
+        setAllRooms(data);
+        if (initialSlug) {
+          const match = data.find((r) => r.slug === initialSlug);
+          if (match) setSlug(match.slug);
+        }
+      }
+    });
+  }, [initialSlug]);
+
   const [checkIn, setCheckIn] = useState(DEFAULT_CHECK_IN);
   const [checkOut, setCheckOut] = useState(() =>
     addDays(DEFAULT_CHECK_IN, Math.max(1, initialNights)),
@@ -82,7 +98,9 @@ export default function RoomBookingForm() {
     message: "",
   });
 
-  const room = getRoomBySlug(slug) ?? roomsData[0];
+  const room = allRooms.find((r) => r.slug === slug) || allRooms[0] || roomsData[0];
+  const liveBudgetRooms = allRooms.filter((r) => r.tier === "budget");
+  const livePremiumRooms = allRooms.filter((r) => r.tier === "premium");
   const nights = nightsBetween(checkIn, checkOut);
 
   const roomsNeeded = roomsNeededFor(room, guests);
@@ -204,14 +222,14 @@ export default function RoomBookingForm() {
               className={`${inputCls} cursor-pointer appearance-none`}
             >
               <optgroup label="Budget">
-                {budgetRooms.map((r) => (
+                {(liveBudgetRooms.length > 0 ? liveBudgetRooms : budgetRooms).map((r) => (
                   <option key={r.slug} value={r.slug}>
                     {r.title} — {formatINR(r.pricePerNight)}/night · sleeps {r.maxGuests}
                   </option>
                 ))}
               </optgroup>
               <optgroup label="Premium">
-                {premiumRooms.map((r) => (
+                {(livePremiumRooms.length > 0 ? livePremiumRooms : premiumRooms).map((r) => (
                   <option key={r.slug} value={r.slug}>
                     {r.title} — {formatINR(r.pricePerNight)}/night · sleeps {r.maxGuests}
                   </option>

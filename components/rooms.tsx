@@ -10,6 +10,8 @@ import { useGSAP } from "@gsap/react";
 import {
   budgetRooms,
   premiumRooms,
+  roomsData,
+  fetchLiveRooms,
   formatINR,
   type Room,
   type RoomTier,
@@ -297,6 +299,26 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
 ───────────────────────────────────────────── */
 const Rooms = () => {
   const [activeTab, setActiveTab] = useState<Tab>("budget");
+  const [roomsList, setRoomsList] = useState<Room[]>(roomsData);
+
+  useEffect(() => {
+    fetchLiveRooms().then((data) => {
+      if (data && data.length > 0) {
+        setRoomsList(data);
+      }
+    });
+  }, []);
+
+  const budgetList = roomsList.filter((r) => r.tier === "budget");
+  const premiumList = roomsList.filter((r) => r.tier === "premium");
+  const currentRooms =
+    activeTab === "budget"
+      ? budgetList.length > 0
+        ? budgetList
+        : budgetRooms
+      : premiumList.length > 0
+      ? premiumList
+      : premiumRooms;
 
   return (
     <section
@@ -345,7 +367,7 @@ const Rooms = () => {
                   relative z-10 px-8 py-2.5 rounded-full text-sm font-semibold tracking-wide capitalize
                   transition-all duration-300 cursor-pointer
                   ${activeTab === tab
-                    ? "bg-[#6DA003] text-white shadow-md"
+                    ? "bg-[#6DA003] text-[#ffffff] shadow-md"
                     : "text-[#6DA003] hover:bg-[#6DA003]/10"
                   }
                 `}
@@ -357,8 +379,8 @@ const Rooms = () => {
         </div>
 
         {/* ── Carousel ── */}
-        <div key={activeTab} >
-          <RoomCarousel rooms={activeTab === "budget" ? budgetRooms : premiumRooms} />
+        <div key={activeTab}>
+          <RoomCarousel rooms={currentRooms} />
         </div>
       </div>
     </section>
