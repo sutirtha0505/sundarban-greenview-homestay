@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -108,6 +109,12 @@ export default function RoomBookingForm() {
       ? "Add your name and phone number to continue."
       : null;
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setShowPreview(true);
+  };
+
   // ── Booking message builder ────────────────────────────────────────────────
   const buildBookingMessage = () => {
     const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
@@ -175,7 +182,7 @@ export default function RoomBookingForm() {
   );
 
   return (
-    <form className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+    <form onSubmit={handleSubmit} className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <div className="space-y-6">
         {/* ── Step 1: Choose room ── */}
         <div className={cardCls}>

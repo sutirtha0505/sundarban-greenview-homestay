@@ -323,7 +323,7 @@ export default function RoomsFilterGrid({ rooms }: { rooms: Room[] }) {
                         ) : null}
                       </div>
                       <Link
-                        href={`/rooms/booking?room=${room.slug}&nights=${nights}&guests=${guests}`}
+                        href={`/booking?room=${room.slug}&nights=${nights}&guests=${guests}`}
                         className="inline-flex shrink-0 rounded-full border border-[#6DA003] px-4 py-2 text-sm font-semibold text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white"
                       >
                         Book room

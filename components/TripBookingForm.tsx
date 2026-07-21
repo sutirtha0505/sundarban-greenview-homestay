@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { tripsData } from "@/lib/data/trips";
 import {
   MAX_PARTY_SIZE,
@@ -61,7 +61,6 @@ function StepHeading({ step, title }: { step: number; title: string }) {
 }
 
 export default function TripBookingForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const tripSlug = searchParams.get("trip");
 
@@ -187,9 +186,7 @@ export default function TripBookingForm() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!canSubmit) return;
-    router.push(
-      `/booking/confirmation?ref=${generatedReference}&trip=${selectedTripData?.slug ?? ""}`,
-    );
+    setShowPreview(true);
   };
 
   return (

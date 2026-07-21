@@ -99,7 +99,7 @@ function RoomCard({
         </div>
 
         <Link
-          href={`/rooms/booking?room=${room.slug}`}
+          href={`/booking?room=${room.slug}`}
           // The card wrapper owns a click handler that rotates the carousel —
           // don't let a deliberate CTA click also spin the arc.
           onClick={(e) => e.stopPropagation()}
