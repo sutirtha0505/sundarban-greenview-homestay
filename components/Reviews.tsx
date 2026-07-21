@@ -10,7 +10,13 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-import { getStorageImageUrl } from "@/lib/supabase/storage";
+import { getStorageImageUrl, uploadImageToStorage } from "@/lib/supabase/storage";
+import {
+  fetchHomepageReviews,
+  createReview,
+  defaultReviews,
+  type ReviewRecord,
+} from "@/lib/data/reviews";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
@@ -23,44 +29,6 @@ type Review = {
   rating: number;
   image: string;
 };
-
-const reviewsData: Review[] = [
-  {
-    id: "r1",
-    name: "Soumen Das",
-    text: "Had an amazing stay at Sundarban Greenview Homestay. The rooms were clean, food was fresh and authentic, and the river view during sunrise was unreal. The staff members were very polite and helped us throughout the trip. The boat safari arrangement was also smooth and well managed.",
-    rating: 5,
-    image: getStorageImageUrl("/images/reviews/image1.jpg")
-  },
-  {
-    id: "r2",
-    name: "Subhajit Sarkar",
-    text: "Perfect place if you want peace away from city noise. I visited with my parents and they loved the hospitality. Homemade Bengali food was the best part for us. The environment feels very natural and relaxing.",
-    rating: 5,
-    image: getStorageImageUrl("/images/reviews/image2.jpg")
-  },
-  {
-    id: "r3",
-    name: "Arindam Chatterjee",
-    text: "The experience was much better than expected. Clean rooms, proper safety arrangements, and very helpful guides during the Sundarban tour. At night the atmosphere beside the river was beautiful. Worth every rupee.",
-    rating: 5,
-    image: getStorageImageUrl("/images/reviews/image3.jpg")
-  },
-  {
-    id: "r4",
-    name: "Pinak Mondal",
-    text: "Stayed here for two nights with friends. The hospitality was genuinely impressive. Fresh fish curry, comfortable beds, and organized sightseeing made the trip memorable. Highly recommended for family trips.",
-    rating: 5,
-    image: getStorageImageUrl("/images/reviews/image4.jpg")
-  },
-  {
-    id: "r5",
-    name: "Madhumita Roy",
-    text: "One of the best homestay experiences I have had in West Bengal. The owners are very humble and caring. Everything from transport assistance to local sightseeing was handled professionally. Will definitely visit again.",
-    rating: 5,
-    image: getStorageImageUrl("/images/reviews/image5.jpg")
-  }
-];
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -88,9 +56,11 @@ function WriteReviewModal({
   const [hoverRating, setHoverRating] = useState(0);
   const [text, setText] = useState("");
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [submitted, setSubmitted] = useState(false);
   const rateLimitDaysLeft = isOpen ? getRateLimitDaysLeft() : null;
@@ -110,10 +80,12 @@ function WriteReviewModal({
 
       if (w <= h) {
         setImageError("Portrait or square photos are not allowed. Please upload a landscape photo (wider than it is tall).");
+        setSelectedFile(null);
         setPreviewUrl(null);
         setDimensions(null);
       } else {
         setImageError(null);
+        setSelectedFile(file);
         setPreviewUrl(objectUrl);
         setDimensions({ width: w, height: h });
       }
@@ -121,6 +93,7 @@ function WriteReviewModal({
 
     img.onerror = () => {
       setImageError("Failed to load image. Please select a valid image file.");
+      setSelectedFile(null);
       setPreviewUrl(null);
       setDimensions(null);
     };
@@ -133,13 +106,34 @@ function WriteReviewModal({
     disabled: rateLimitDaysLeft !== null,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (rateLimitDaysLeft !== null) return;
     if (!name.trim() || !text.trim()) return;
 
-    localStorage.setItem("gvh_last_review_timestamp", String(Date.now()));
-    setSubmitted(true);
+    setIsSubmitting(true);
+    try {
+      let imageUrl = "";
+      if (selectedFile) {
+        imageUrl = await uploadImageToStorage(selectedFile, "images/reviews");
+      }
+
+      await createReview({
+        name: name.trim(),
+        text: text.trim(),
+        rating,
+        image: imageUrl,
+        show_in_home: true,
+      });
+
+      localStorage.setItem("gvh_last_review_timestamp", String(Date.now()));
+      setSubmitted(true);
+    } catch (err: unknown) {
+      console.error("Failed to submit review:", err);
+      alert((err as Error).message || "Failed to submit review. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -148,6 +142,7 @@ function WriteReviewModal({
     setText("");
     setRating(5);
     setHoverRating(0);
+    setSelectedFile(null);
     setPreviewUrl(null);
     setImageError(null);
     setDimensions(null);
@@ -374,10 +369,17 @@ function WriteReviewModal({
                 </button>
                 <button
                   type="submit"
-                  disabled={rateLimitDaysLeft !== null || !name.trim() || !text.trim()}
-                  className="rounded-full bg-[#6DA003] px-7 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-[#5B8703] disabled:opacity-40 disabled:hover:scale-100 cursor-pointer shadow-[0_8px_25px_rgba(109,160,3,0.3)]"
+                  disabled={isSubmitting || rateLimitDaysLeft !== null || !name.trim() || !text.trim()}
+                  className="flex items-center gap-2 rounded-full bg-[#6DA003] px-7 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105 hover:bg-[#5B8703] disabled:opacity-40 disabled:hover:scale-100 cursor-pointer shadow-[0_8px_25px_rgba(109,160,3,0.3)]"
                 >
-                  Submit Review
+                  {isSubmitting ? (
+                    <>
+                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <span>Submit Review</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -408,9 +410,15 @@ function ReviewCard({ review }: { review: Review }) {
         <div className="mt-auto w-full flex flex-col items-center">
           <div className="flex items-center gap-2 mb-3 mt-2">
             <span className="text-[13px] font-medium text-[#444444]">Rating :</span>
-            <div className="flex text-[#F5B301] text-sm gap-[2px]">
+            <div className="flex text-sm gap-[2px]">
               {Array.from({ length: 5 }).map((_, i) => (
-                <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <svg
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < (review.rating || 5) ? "fill-[#F5B301] text-[#F5B301]" : "fill-gray-200 text-gray-200"
+                  }`}
+                  viewBox="0 0 24 24"
+                >
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
               ))}
@@ -589,6 +597,19 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
 
 export default function Reviews() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviewsList, setReviewsList] = useState<Review[]>(defaultReviews);
+
+  const loadReviews = useCallback(() => {
+    fetchHomepageReviews().then((data) => {
+      if (data && data.length > 0) {
+        setReviewsList(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
 
   return (
     <section id="reviews" className="relative w-full min-h-screen py-10 pb-[200px] sm:pb-[160px] lg:pb-10 bg-[#E1E1E1] flex flex-col items-center scroll-mt-28">
@@ -605,7 +626,7 @@ export default function Reviews() {
       </div>
 
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 relative z-10">
-        <ReviewCarousel reviews={reviewsData} />
+        <ReviewCarousel reviews={reviewsList} />
       </div>
 
       <WriteReviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

@@ -27,7 +27,7 @@ const CONTACT_ITEMS = [
         ),
     },
     {
-        label: "greenviewhomestay@gmail.com",
+        label: "bideshmondal50@gmail.com",
         icon: (
             <>
                 <rect x="3" y="5" width="18" height="14" rx="2" />

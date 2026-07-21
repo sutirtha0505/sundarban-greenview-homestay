@@ -219,6 +219,18 @@ export function getRoomBySlug(slug: string): Room | undefined {
 
 import { supabase } from "@/lib/supabase/client";
 
+interface SupabaseRoomItem {
+  id?: string;
+  slug: string;
+  tier: RoomTier;
+  title: string;
+  description?: string;
+  hero_image?: string;
+  image?: string;
+  price_per_night: number | string;
+  max_guests: number | string;
+}
+
 export async function fetchLiveRooms(): Promise<Room[]> {
   try {
     const { data, error } = await supabase
@@ -231,7 +243,7 @@ export async function fetchLiveRooms(): Promise<Room[]> {
       return roomsData;
     }
 
-    return data.map((item: any) => ({
+    return (data as SupabaseRoomItem[]).map((item) => ({
       id: item.id || item.slug,
       slug: item.slug,
       tier: item.tier as RoomTier,

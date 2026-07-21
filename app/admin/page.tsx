@@ -26,6 +26,10 @@ import {
   UserPlus,
   Lock,
   Images,
+  MessageSquareQuote,
+  Star,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
 import {
   fetchLiveGalleryImages,
@@ -33,6 +37,13 @@ import {
   deleteGalleryImageFromStorage,
   type GalleryItem,
 } from "@/lib/data/gallery";
+import {
+  fetchAllReviews,
+  toggleReviewShowInHome,
+  createReview,
+  deleteReview,
+  type ReviewRecord,
+} from "@/lib/data/reviews";
 
 type RoomTier = "budget" | "premium";
 type DurationBand = "1N" | "2N" | "3N+";
@@ -71,7 +82,7 @@ export default function AdminPage() {
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState<"rooms" | "trips" | "hero" | "gallery">("rooms");
+  const [activeTab, setActiveTab] = useState<"rooms" | "trips" | "hero" | "gallery" | "reviews">("rooms");
 
   // Feedback notifications
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -206,6 +217,81 @@ export default function AdminPage() {
   };
 
   // --------------------------------------------------------------------------
+  // Reviews State & Operations
+  // --------------------------------------------------------------------------
+  const [reviewsList, setReviewsList] = useState<ReviewRecord[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [uploadingReviewImage, setUploadingReviewImage] = useState(false);
+
+  const [reviewForm, setReviewForm] = useState({
+    name: "",
+    text: "",
+    rating: 5,
+    image: "",
+    show_in_home: true,
+  });
+
+  const fetchReviews = useCallback(async () => {
+    setLoadingReviews(true);
+    try {
+      const data = await fetchAllReviews();
+      setReviewsList(data);
+    } catch (err: unknown) {
+      console.error("Error fetching reviews:", err);
+    } finally {
+      setLoadingReviews(false);
+    }
+  }, []);
+
+  const handleToggleShowInHome = async (review: ReviewRecord) => {
+    const nextVal = !review.show_in_home;
+    try {
+      await toggleReviewShowInHome(review.id, nextVal);
+      showToast(`Review by "${review.name}" ${nextVal ? "is now shown" : "is now hidden"} on Homepage`);
+      fetchReviews();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to toggle review visibility", "error");
+    }
+  };
+
+  const handleDeleteReview = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete review by "${name}"?`)) return;
+    try {
+      await deleteReview(id);
+      showToast("Review deleted successfully!");
+      fetchReviews();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to delete review", "error");
+    }
+  };
+
+  const handleCreateReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewForm.name.trim() || !reviewForm.text.trim()) {
+      showToast("Name and review text are required", "error");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await createReview(reviewForm);
+      showToast("New review added successfully!");
+      setReviewForm({
+        name: "",
+        text: "",
+        rating: 5,
+        image: "",
+        show_in_home: true,
+      });
+      fetchReviews();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to add review", "error");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  // --------------------------------------------------------------------------
   // Admin Verification Logic
   // --------------------------------------------------------------------------
   const verifyAdminStatus = useCallback(async (user: User | null) => {
@@ -289,6 +375,7 @@ export default function AdminPage() {
           fetchTrips();
           fetchHeroContent();
           fetchGallery();
+          fetchReviews();
         }
       } else {
         setSession(null);
@@ -307,6 +394,7 @@ export default function AdminPage() {
           fetchTrips();
           fetchHeroContent();
           fetchGallery();
+          fetchReviews();
         }
       } else {
         setSession(null);
@@ -315,7 +403,7 @@ export default function AdminPage() {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchRooms, fetchTrips, fetchHeroContent, fetchGallery, verifyAdminStatus]);
+  }, [fetchRooms, fetchTrips, fetchHeroContent, fetchGallery, fetchReviews, verifyAdminStatus]);
 
   // Handle Sign In / Sign Up Form Submission
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -1000,6 +1088,17 @@ export default function AdminPage() {
           >
             <Images className="h-5 w-5" />
             <span>Manage Gallery ({galleryList.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("reviews")}
+            className={`flex items-center gap-2.5 border-b-2 px-6 py-4 text-sm font-semibold transition ${
+              activeTab === "reviews"
+                ? "border-[#C5FE4E] text-[#C5FE4E]"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <MessageSquareQuote className="h-5 w-5" />
+            <span>Manage Reviews ({reviewsList.length})</span>
           </button>
         </div>
 
@@ -1892,6 +1991,277 @@ export default function AdminPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: REVIEWS MANAGEMENT */}
+        {activeTab === "reviews" && (
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+            {/* Left Column: Add New Review Form */}
+            <div className="lg:col-span-5">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <PlusCircle className="h-5 w-5 text-[#C5FE4E]" />
+                    <h2 className="text-xl font-bold text-white">Add Customer Review</h2>
+                  </div>
+                  <span className="rounded-full bg-[#6DA003]/20 px-3 py-1 text-xs font-semibold text-[#C5FE4E] border border-[#6DA003]/40">
+                    Supabase DB
+                  </span>
+                </div>
+
+                <form onSubmit={handleCreateReviewSubmit} className="space-y-4">
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-300">
+                      Customer Name <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={reviewForm.name}
+                      onChange={(e) => setReviewForm((prev) => ({ ...prev, name: e.target.value }))}
+                      placeholder="e.g. Soumen Das"
+                      className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-[#C5FE4E] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-300">
+                      Rating (1 to 5 Stars)
+                    </label>
+                    <div className="flex items-center gap-2 py-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewForm((prev) => ({ ...prev, rating: star }))}
+                          className="p-1 transition hover:scale-125"
+                        >
+                          <Star
+                            className={`h-6 w-6 ${
+                              star <= reviewForm.rating
+                                ? "fill-[#F5B301] text-[#F5B301]"
+                                : "fill-white/10 text-white/20"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                      <span className="ml-2 text-xs font-semibold text-[#C5FE4E]">
+                        {reviewForm.rating} / 5 Stars
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-300">
+                      Review Text <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={reviewForm.text}
+                      onChange={(e) => setReviewForm((prev) => ({ ...prev, text: e.target.value }))}
+                      placeholder="Enter customer review text..."
+                      className="w-full rounded-xl border border-white/10 bg-black/40 p-4 text-sm text-white placeholder-gray-500 focus:border-[#C5FE4E] focus:outline-none resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-300">
+                      Customer Photo
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={reviewForm.image}
+                        onChange={(e) => setReviewForm((prev) => ({ ...prev, image: e.target.value }))}
+                        placeholder="Image URL or upload file..."
+                        className="flex-1 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-[#C5FE4E] focus:outline-none"
+                      />
+                      <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-semibold text-gray-300 hover:bg-white/10">
+                        {uploadingReviewImage ? (
+                          <Loader2 className="h-4 w-4 animate-spin text-[#C5FE4E]" />
+                        ) : (
+                          <Upload className="h-4 w-4 text-[#C5FE4E]" />
+                        )}
+                        <span>Browse</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setUploadingReviewImage(true);
+                            try {
+                              const url = await uploadImageToStorage(file, "images/reviews");
+                              setReviewForm((prev) => ({ ...prev, image: url }));
+                              showToast("Photo uploaded to Supabase Storage!");
+                            } catch (err: unknown) {
+                              showToast((err as Error).message || "Failed to upload image", "error");
+                            } finally {
+                              setUploadingReviewImage(false);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/30 p-4">
+                    <div>
+                      <span className="text-xs font-semibold text-white">Show on Homepage</span>
+                      <p className="text-[11px] text-gray-400">Controls whether this review appears in Homepage Carousel</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setReviewForm((prev) => ({ ...prev, show_in_home: !prev.show_in_home }))}
+                      className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                        reviewForm.show_in_home
+                          ? "bg-[#6DA003]/20 text-[#C5FE4E] border border-[#6DA003]/40"
+                          : "bg-gray-800 text-gray-400 border border-gray-700"
+                      }`}
+                    >
+                      {reviewForm.show_in_home ? (
+                        <>
+                          <ToggleRight className="h-4 w-4 text-[#C5FE4E]" />
+                          <span>YES</span>
+                        </>
+                      ) : (
+                        <>
+                          <ToggleLeft className="h-4 w-4 text-gray-400" />
+                          <span>NO</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                  >
+                    {submittingReview ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        <span>Saving Review to Supabase...</span>
+                      </>
+                    ) : (
+                      <>
+                        <PlusCircle className="h-5 w-5" />
+                        <span>Add Review</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Right Column: Reviews List & Visibility Management */}
+            <div className="lg:col-span-7">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                      <MessageSquareQuote className="h-5 w-5 text-[#C5FE4E]" />
+                      <span>Customer Reviews ({reviewsList.length})</span>
+                    </h2>
+                    <p className="mt-1 text-xs text-gray-400">
+                      Toggle <code className="text-[#C5FE4E]">show_in_home</code> to show/hide reviews on Homepage
+                    </p>
+                  </div>
+                </div>
+
+                {loadingReviews ? (
+                  <div className="flex py-16 justify-center items-center text-[#C5FE4E]">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  </div>
+                ) : reviewsList.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-sm text-gray-400">
+                    No reviews found in Supabase DB. Add your first review on the left!
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {reviewsList.map((review) => (
+                      <div
+                        key={review.id}
+                        className={`flex flex-col gap-4 rounded-2xl border p-4 transition sm:flex-row sm:items-center sm:justify-between ${
+                          review.show_in_home
+                            ? "border-[#C5FE4E]/30 bg-white/5"
+                            : "border-white/5 bg-black/40 opacity-75"
+                        }`}
+                      >
+                        <div className="flex items-start gap-4 flex-1">
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-black/50 border border-white/10">
+                            {review.image ? (
+                              <Image
+                                src={review.image}
+                                alt={review.name}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-gray-500 font-bold">
+                                {review.name.charAt(0)}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-bold text-white truncate">{review.name}</h3>
+                              <div className="flex items-center text-[#F5B301] text-xs">
+                                <Star className="h-3.5 w-3.5 fill-current" />
+                                <span className="ml-1 font-semibold text-gray-300">{review.rating}</span>
+                              </div>
+                            </div>
+                            <p className="mt-1 text-xs text-gray-300 line-clamp-2 leading-relaxed">
+                              "{review.text}"
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/10">
+                          {/* Homepage Display Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleShowInHome(review)}
+                            className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                              review.show_in_home
+                                ? "border-[#C5FE4E]/50 bg-[#6DA003]/20 text-[#C5FE4E] hover:bg-[#6DA003]/30"
+                                : "border-gray-700 bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+                            }`}
+                            title="Click to toggle homepage visibility"
+                          >
+                            {review.show_in_home ? (
+                              <>
+                                <ToggleRight className="h-4 w-4 text-[#C5FE4E]" />
+                                <span>Showing on Home</span>
+                              </>
+                            ) : (
+                              <>
+                                <ToggleLeft className="h-4 w-4 text-gray-400" />
+                                <span>Hidden from Home</span>
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteReview(review.id, review.name)}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 transition hover:bg-red-500/20"
+                            title="Delete review"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

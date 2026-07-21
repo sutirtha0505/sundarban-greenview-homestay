@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import Masonry from "./Masonry";
 import { fetchLiveGalleryImages, defaultGalleryImages, type GalleryItem } from "@/lib/data/gallery";
 
@@ -21,7 +22,7 @@ export default function Gallery() {
       id: `gallery-img-${index}`,
       img: url,
       url: url,
-      height: 400 + Math.floor(Math.random() * 200),
+      height: 400 + ((index * 73 + 17) % 200),
     }));
   }, [galleryImages]);
 
@@ -56,10 +57,13 @@ export default function Gallery() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
-            <img 
+            <Image 
               src={selectedImage} 
               alt="Gallery Preview" 
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              width={1200}
+              height={800}
+              unoptimized
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl w-auto h-auto"
               onClick={(e) => e.stopPropagation()}
             />
           </div>

@@ -191,7 +191,7 @@ Promote the existing [components/Contact.tsx](components/Contact.tsx) block to a
 - "Let's Work Together" heading (**rename** — for a homestay use "Get in Touch" or
   "Plan Your Stay"; the current copy reads like a freelancer portfolio).
 - Contact tiles: address (Pakhiralay, West Bengal 743370), phone (+91 7679756846),
-  email (greenviewhomestay@gmail.com).
+  email (bideshmondal50@gmail.com).
 - Working enquiry form: first name, last name, email, phone, travel dates, guests,
   message. Wire to a server action or route handler with validation + success/error state.
 - Embedded Google Map of the property.

@@ -186,7 +186,7 @@ export default function RoomBookingForm() {
   const emailHref = () => {
     const msg = buildBookingMessage();
     const subject = encodeURIComponent(`Room Booking Enquiry – ${form.firstName} ${form.lastName}`);
-    return `https://mail.google.com/mail/?view=cm&to=greenviewhomestay@gmail.com&su=${subject}&body=${encodeURIComponent(msg)}`;
+    return `https://mail.google.com/mail/?view=cm&to=bideshmondal50@gmail.com&su=${subject}&body=${encodeURIComponent(msg)}`;
   };
 
   const whatsappHref = () =>
@@ -315,31 +315,31 @@ export default function RoomBookingForm() {
           )}
 
           <div className="mt-6">
-              <span className={labelCls}>Guests</span>
-              {/* Stepper */}
-              <div className="flex items-center gap-3 mt-1">
-                <button type="button" onClick={() => setGuests((g) => Math.max(1, g - 1))} disabled={guests <= 1}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#6DA003]/30 bg-[#6DA003]/5 text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white hover:border-[#6DA003] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                  aria-label="Remove guest">
-                  <svg width="14" height="2" viewBox="0 0 14 2" fill="currentColor"><rect width="14" height="2" rx="1" /></svg>
-                </button>
-                <div className="flex-1 flex flex-col items-center">
-                  <span className="font-serif text-[38px] font-bold leading-none text-[#111111] tabular-nums">{guests}</span>
-                  <span className="mt-1 text-[11px] uppercase tracking-[0.22em] text-[#888888]">guest{guests === 1 ? "" : "s"}</span>
-                </div>
-                <button type="button" onClick={() => setGuests((g) => Math.min(MAX_PARTY_SIZE, g + 1))} disabled={guests >= MAX_PARTY_SIZE}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#6DA003]/30 bg-[#6DA003]/5 text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white hover:border-[#6DA003] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                  aria-label="Add guest">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="6" y="0" width="2" height="14" rx="1" /><rect x="0" y="6" width="14" height="2" rx="1" /></svg>
-                </button>
+            <span className={labelCls}>Guests</span>
+            {/* Stepper */}
+            <div className="flex items-center gap-3 mt-1">
+              <button type="button" onClick={() => setGuests((g) => Math.max(1, g - 1))} disabled={guests <= 1}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#6DA003]/30 bg-[#6DA003]/5 text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white hover:border-[#6DA003] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                aria-label="Remove guest">
+                <svg width="14" height="2" viewBox="0 0 14 2" fill="currentColor"><rect width="14" height="2" rx="1" /></svg>
+              </button>
+              <div className="flex-1 flex flex-col items-center">
+                <span className="font-serif text-[38px] font-bold leading-none text-[#111111] tabular-nums">{guests}</span>
+                <span className="mt-1 text-[11px] uppercase tracking-[0.22em] text-[#888888]">guest{guests === 1 ? "" : "s"}</span>
               </div>
-              {/* Dot track */}
-              <div className="mt-4 flex gap-1.5" aria-hidden>
-                {Array.from({ length: MAX_PARTY_SIZE }).map((_, i) => (
-                  <button key={i} type="button" onClick={() => setGuests(i + 1)}
-                    className={`h-1.5 flex-1 rounded-full transition-all duration-200 cursor-pointer ${i < guests ? "bg-[#6DA003]" : "bg-[#6DA003]/15"}`} />
-                ))}
-              </div>
+              <button type="button" onClick={() => setGuests((g) => Math.min(MAX_PARTY_SIZE, g + 1))} disabled={guests >= MAX_PARTY_SIZE}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#6DA003]/30 bg-[#6DA003]/5 text-[#6DA003] transition-all hover:bg-[#6DA003] hover:text-white hover:border-[#6DA003] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                aria-label="Add guest">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="6" y="0" width="2" height="14" rx="1" /><rect x="0" y="6" width="14" height="2" rx="1" /></svg>
+              </button>
+            </div>
+            {/* Dot track */}
+            <div className="mt-4 flex gap-1.5" aria-hidden>
+              {Array.from({ length: MAX_PARTY_SIZE }).map((_, i) => (
+                <button key={i} type="button" onClick={() => setGuests(i + 1)}
+                  className={`h-1.5 flex-1 rounded-full transition-all duration-200 cursor-pointer ${i < guests ? "bg-[#6DA003]" : "bg-[#6DA003]/15"}`} />
+              ))}
+            </div>
 
             <div className="mt-3 rounded-[16px] bg-[#6DA003]/5 px-4 py-3 text-sm">
               <p className="text-[#555555]">

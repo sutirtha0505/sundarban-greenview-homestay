@@ -184,7 +184,7 @@ export default function TripBookingForm() {
     const msg = buildBookingMessage();
     const subject = encodeURIComponent(`Booking Enquiry – ${form.firstName} ${form.lastName}`);
     const body = encodeURIComponent(msg);
-    return `https://mail.google.com/mail/?view=cm&to=greenviewhomestay@gmail.com&su=${subject}&body=${body}`;
+    return `https://mail.google.com/mail/?view=cm&to=bideshmondal50@gmail.com&su=${subject}&body=${body}`;
   };
 
   const whatsappHref = () => {
@@ -734,8 +734,8 @@ export default function TripBookingForm() {
             rel="noopener noreferrer"
             aria-disabled={!canSubmit}
             className={`rounded-full px-5 py-3 text-center text-sm font-semibold transition-all ${canSubmit
-                ? "bg-[#6DA003] text-white hover:bg-[#5B8703] hover:shadow-[0_6px_20px_rgba(109,160,3,0.35)] cursor-pointer"
-                : "cursor-not-allowed bg-[#6DA003]/40 text-white/50"
+              ? "bg-[#6DA003] text-white hover:bg-[#5B8703] hover:shadow-[0_6px_20px_rgba(109,160,3,0.35)] cursor-pointer"
+              : "cursor-not-allowed bg-[#6DA003]/40 text-white/50"
               }`}
           >
             ✉&nbsp; Confirm by Email
@@ -747,8 +747,8 @@ export default function TripBookingForm() {
             rel="noopener noreferrer"
             aria-disabled={!canSubmit}
             className={`rounded-full border px-5 py-3 text-center text-sm font-semibold transition-all ${canSubmit
-                ? "border-[#C5FE4E] text-white hover:bg-[#C5FE4E] hover:text-[#111111] cursor-pointer"
-                : "cursor-not-allowed border-white/20 text-white/40"
+              ? "border-[#C5FE4E] text-white hover:bg-[#C5FE4E] hover:text-[#111111] cursor-pointer"
+              : "cursor-not-allowed border-white/20 text-white/40"
               }`}
           >
             💬&nbsp; Ask on WhatsApp
