@@ -600,7 +600,7 @@ export default function TripBookingForm() {
             onClick={() => setShowPreview(true)}
             className="mt-6 rounded-full bg-[#6DA003] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#5B8703] hover:shadow-[0_8px_24px_rgba(109,160,3,0.3)] disabled:cursor-not-allowed disabled:bg-[#C4C4C4] disabled:shadow-none cursor-pointer"
           >
-            Review Booking — {formatINR(advance)} advance
+            Preview Booking — {formatINR(advance)} advance
           </button>
           {blockedReason ? (
             <p className="mt-3 text-[12px] text-[#888888]">{blockedReason}</p>
