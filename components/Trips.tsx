@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from "next/link";
-import Image from 'next/image';
+import CachedImage from './CachedImage';
 import { useRouter } from 'next/navigation';
 import SectionHeading from "./SectionHeading";
 import { tripsData } from "@/lib/data/trips";
@@ -80,7 +80,7 @@ export default function Trips() {
               >
                 {/* Image Container */}
                 <div className="relative w-full aspect-4/3 rounded-[24px] overflow-hidden bg-[#F5F5F5]">
-                  <Image 
+                  <CachedImage 
                     src={trip.image}
                     alt={trip.title || "Trip Image"}
                     fill

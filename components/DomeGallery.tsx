@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { useGesture } from '@use-gesture/react';
+import { getCachedImageUrl, getImmediateCachedUrl } from "@/lib/supabase/imageCache";
 import './DomeGallery.css';
 
 type ImageItem = string | { src: string; alt?: string };
@@ -138,6 +139,34 @@ function computeItemBaseRotation(offsetX: number, offsetY: number, sizeX: number
   const rotateY = unit * (offsetX + (sizeX - 1) / 2);
   const rotateX = unit * (offsetY - (sizeY - 1) / 2);
   return { rotateX, rotateY };
+}
+
+function DomeTileImage({ src, alt }: { src: string; alt?: string }) {
+  const [cachedSrc, setCachedSrc] = useState<string>(() => getImmediateCachedUrl(src) || src);
+  const [prevSrc, setPrevSrc] = useState(src);
+
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setCachedSrc(getImmediateCachedUrl(src) || src);
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    const immediate = getImmediateCachedUrl(src);
+    if (!immediate) {
+      getCachedImageUrl(src).then((url) => {
+        if (mounted && url) setCachedSrc(url);
+      });
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [src]);
+
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img src={cachedSrc} draggable={false} alt={alt || ''} />
+  );
 }
 
 export default function DomeGallery({
@@ -738,8 +767,7 @@ export default function DomeGallery({
                   onClick={onTileClick}
                   onPointerUp={onTilePointerUp}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={it.src} draggable={false} alt={it.alt} />
+                  <DomeTileImage src={it.src} alt={it.alt} />
                 </div>
               </div>
             ))}

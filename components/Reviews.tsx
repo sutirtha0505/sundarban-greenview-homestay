@@ -2,12 +2,15 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
+import CachedImage from "./CachedImage";
 import { useDropzone } from "react-dropzone";
 import SectionHeading from "./SectionHeading";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
@@ -27,35 +30,35 @@ const reviewsData: Review[] = [
     name: "Soumen Das",
     text: "Had an amazing stay at Sundarban Greenview Homestay. The rooms were clean, food was fresh and authentic, and the river view during sunrise was unreal. The staff members were very polite and helped us throughout the trip. The boat safari arrangement was also smooth and well managed.",
     rating: 5,
-    image: "/images/reviews/image1.jpg"
+    image: getStorageImageUrl("/images/reviews/image1.jpg")
   },
   {
     id: "r2",
     name: "Subhajit Sarkar",
     text: "Perfect place if you want peace away from city noise. I visited with my parents and they loved the hospitality. Homemade Bengali food was the best part for us. The environment feels very natural and relaxing.",
     rating: 5,
-    image: "/images/reviews/image2.jpg"
+    image: getStorageImageUrl("/images/reviews/image2.jpg")
   },
   {
     id: "r3",
     name: "Arindam Chatterjee",
     text: "The experience was much better than expected. Clean rooms, proper safety arrangements, and very helpful guides during the Sundarban tour. At night the atmosphere beside the river was beautiful. Worth every rupee.",
     rating: 5,
-    image: "/images/reviews/image3.jpg"
+    image: getStorageImageUrl("/images/reviews/image3.jpg")
   },
   {
     id: "r4",
     name: "Pinak Mondal",
     text: "Stayed here for two nights with friends. The hospitality was genuinely impressive. Fresh fish curry, comfortable beds, and organized sightseeing made the trip memorable. Highly recommended for family trips.",
     rating: 5,
-    image: "/images/reviews/image4.jpg"
+    image: getStorageImageUrl("/images/reviews/image4.jpg")
   },
   {
     id: "r5",
     name: "Madhumita Roy",
     text: "One of the best homestay experiences I have had in West Bengal. The owners are very humble and caring. Everything from transport assistance to local sightseeing was handled professionally. Will definitely visit again.",
     rating: 5,
-    image: "/images/reviews/image5.jpg"
+    image: getStorageImageUrl("/images/reviews/image5.jpg")
   }
 ];
 
@@ -389,7 +392,7 @@ function ReviewCard({ review }: { review: Review }) {
   return (
     <div className="w-full bg-white rounded-[24px] p-4 border border-[#6DA003]/25 shadow-[0_8px_30px_rgba(109,160,3,0.08)] flex flex-col min-h-[380px] sm:h-[460px]">
       <div className="relative w-full h-[200px] rounded-[16px] overflow-hidden shrink-0">
-        <Image
+        <CachedImage
           src={review.image}
           alt={review.name}
           fill
@@ -471,6 +474,8 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
+            once: true,
+            toggleActions: "play none none none"
           }
         });
         gsap.fromTo(card, { opacity: 0, scale: 0.5 }, {
@@ -482,6 +487,8 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
+            once: true,
+            toggleActions: "play none none none"
           }
         });
       } else {
@@ -506,6 +513,7 @@ function ReviewCarousel({ reviews }: { reviews: Review[] }) {
       ScrollTrigger.create({
         trigger: containerRef.current,
         start: "top 80%",
+        once: true,
         onEnter: () => {
           setTimeout(() => { hasAnimatedIn.current = true; }, 1500);
         }

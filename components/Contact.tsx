@@ -1,4 +1,5 @@
-import Image from "next/image";
+import CachedImage from "./CachedImage";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 const NAV_LINKS = [
     { href: "#trips", label: "Book your Trips" },
@@ -91,8 +92,8 @@ export default function Contact() {
 
                     {/* Image card */}
                     <div className="relative h-[440px] overflow-hidden rounded-[18px] sm:h-[540px] md:h-[620px] lg:h-[920px]">
-                        <Image
-                            src="/images/gallery/image8.jpg"
+                        <CachedImage
+                            src={getStorageImageUrl("/images/gallery/image8.jpg")}
                             alt="Sundarban wildlife"
                             fill
                             sizes="(max-width: 1024px) 100vw, 39vw"
@@ -103,12 +104,13 @@ export default function Contact() {
                         {/* Frosted glass overlay */}
                         <div className="absolute bottom-[18px] left-[50px] right-[50px] rounded-[34px] border border-white/10 bg-white/30 px-[28px] py-[26px] backdrop-blur-md">
                             <div className="flex flex-col items-center">
-                                <Image
-                                    src="/images/icons/sundarban-green-view-logo.png"
+                                <CachedImage
+                                    src={getStorageImageUrl("/images/icons/sundarban-green-view-logo.png")}
                                     alt="Greenview Homestay Logo"
                                     width={150}
                                     height={82}
-                                    className="h-auto w-[132px] object-contain"
+                                    style={{ height: "auto" }}
+                                    className="w-[132px] object-contain"
                                 />
 
                                 <p className="mt-[14px] text-center font-serif text-[18px] md:text-[22px] lg:text-[30px] leading-none text-[#C9FF4A]">

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import CachedImage from "./CachedImage";
 import gsap from "gsap";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -52,7 +52,7 @@ function RoomCard({
     >
       {/* Image */}
       <div className="relative w-full" style={{ height: "200px", flexShrink: 0 }}>
-        <Image
+        <CachedImage
           src={room.image}
           alt={room.title}
           fill
@@ -168,6 +168,8 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
+            once: true,
+            toggleActions: "play none none none"
           }
         });
         gsap.fromTo(card, { opacity: 0, scale: 0.5 }, {
@@ -179,6 +181,8 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
+            once: true,
+            toggleActions: "play none none none"
           }
         });
       } else {
@@ -204,6 +208,7 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
       ScrollTrigger.create({
         trigger: containerRef.current,
         start: "top 80%",
+        once: true,
         onEnter: () => {
           setTimeout(() => { hasAnimatedIn.current = true; }, 1500);
         }

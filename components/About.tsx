@@ -1,6 +1,7 @@
-import Image from "next/image";
+import CachedImage from "./CachedImage";
 import Link from "next/link";
 import { Open_Sans } from "next/font/google";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -18,19 +19,19 @@ export default function About() {
                     {/* Top bento grid */}
                     <div className="h-[220px] md:h-[280px] grid grid-cols-[1fr_1fr_1fr] grid-rows-[1fr_1fr_1fr_1fr] gap-[4px]">
                         <div className="relative col-span-1 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image1.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image1.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image2.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image2.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden">
-                            <Image src="/images/gallery/image3.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image3.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image4.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image4.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-3 overflow-hidden">
-                            <Image src="/images/gallery/image5.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image5.jpg")} alt="" fill className="object-cover" />
                         </div>
                     </div>
 
@@ -73,19 +74,19 @@ export default function About() {
                     {/* Bottom bento grid */}
                     <div className="h-[220px] md:h-[280px] grid grid-cols-[1fr_1fr_1fr] grid-rows-[1fr_1fr_1fr_1fr] gap-[4px]">
                         <div className="relative col-span-3 overflow-hidden">
-                            <Image src="/images/gallery/image10.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image10.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-1 overflow-hidden">
-                            <Image src="/images/gallery/image11.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image11.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-1 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image12.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image12.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image13.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image13.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden">
-                            <Image src="/images/gallery/image14.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image14.jpg")} alt="" fill className="object-cover" />
                         </div>
                     </div>
                 </div>
@@ -95,19 +96,19 @@ export default function About() {
                     {/* LEFT */}
                     <div className="grid h-full grid-cols-[1fr_1fr_1fr] grid-rows-[1fr_1fr_1fr_1fr] gap-[4px]">
                         <div className="relative col-span-1 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image1.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image1.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image2.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image2.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden">
-                            <Image src="/images/gallery/image3.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image3.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image4.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image4.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-3 overflow-hidden">
-                            <Image src="/images/gallery/image5.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image5.jpg")} alt="" fill className="object-cover" />
                         </div>
                     </div>
 
@@ -115,10 +116,10 @@ export default function About() {
                     <div className="grid h-full grid-rows-[0.55fr_2.2fr_0.55fr] gap-[4px]">
                         <div className="grid h-full grid-cols-2 gap-[4px]">
                             <div className="relative overflow-hidden">
-                                <Image src="/images/gallery/image6.jpg" alt="" fill className="object-cover" />
+                                <CachedImage src={getStorageImageUrl("/images/gallery/image6.jpg")} alt="" fill className="object-cover" />
                             </div>
                             <div className="relative overflow-hidden">
-                                <Image src="/images/gallery/image7.jpg" alt="" fill className="object-cover" />
+                                <CachedImage src={getStorageImageUrl("/images/gallery/image7.jpg")} alt="" fill className="object-cover" />
                             </div>
                         </div>
 
@@ -159,10 +160,10 @@ export default function About() {
 
                         <div className="grid h-full grid-cols-2 gap-[4px]">
                             <div className="relative overflow-hidden">
-                                <Image src="/images/gallery/image8.jpg" alt="" fill className="object-cover" />
+                                <CachedImage src={getStorageImageUrl("/images/gallery/image8.jpg")} alt="" fill className="object-cover" />
                             </div>
                             <div className="relative overflow-hidden">
-                                <Image src="/images/gallery/image9.jpg" alt="" fill className="object-cover" />
+                                <CachedImage src={getStorageImageUrl("/images/gallery/image9.jpg")} alt="" fill className="object-cover" />
                             </div>
                         </div>
                     </div>
@@ -170,19 +171,19 @@ export default function About() {
                     {/* RIGHT */}
                     <div className="grid h-full grid-cols-[1fr_1fr_1fr] grid-rows-[1fr_1fr_1fr_1fr] gap-[4px]">
                         <div className="relative col-span-3 overflow-hidden">
-                            <Image src="/images/gallery/image10.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image10.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-1 overflow-hidden">
-                            <Image src="/images/gallery/image11.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image11.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-1 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image12.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image12.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative col-span-2 row-span-2 overflow-hidden">
-                            <Image src="/images/gallery/image13.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image13.jpg")} alt="" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden">
-                            <Image src="/images/gallery/image14.jpg" alt="" fill className="object-cover" />
+                            <CachedImage src={getStorageImageUrl("/images/gallery/image14.jpg")} alt="" fill className="object-cover" />
                         </div>
                     </div>
                 </div>

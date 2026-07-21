@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 export default function Navbar() {
   return (
@@ -7,7 +8,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between gap-4">
         <Link href="#home" className="flex items-center">
           <Image
-            src="/images/icons/sundarban-green-view-logo.png"
+            src={getStorageImageUrl("/images/icons/sundarban-green-view-logo.png")}
             alt="Sundarban Green View Logo"
             width={65}
             height={65}

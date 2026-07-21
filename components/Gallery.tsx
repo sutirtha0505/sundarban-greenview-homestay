@@ -1,31 +1,16 @@
-import fs from 'fs';
-import path from 'path';
 import DomeGallery from "./DomeGallery";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
-function getImagesRecursively(dir: string, baseDir: string = dir): string[] {
-    let results: string[] = [];
-    if (!fs.existsSync(dir)) return results;
+const galleryFiles = [
+  "image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg",
+  "image6.jpg", "image7.jpg", "image8.jpg", "image9.jpg", "image10.jpg",
+  "image11.jpg", "image12.jpg", "image13.jpg", "image14.jpg", "image15.jpg",
+  "image16.jpg", "image17.jpg", "image18.jpg", "image19.jpg", "kingFisher.png"
+];
 
-    const list = fs.readdirSync(dir);
-    list.forEach((file) => {
-        const fullPath = path.join(dir, file);
-        const stat = fs.statSync(fullPath);
-        if (stat && stat.isDirectory()) {
-            results = results.concat(getImagesRecursively(fullPath, baseDir));
-        } else {
-            if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file)) {
-                const relativePath = path.relative(baseDir, fullPath);
-                results.push(`/images/gallery/${relativePath.replace(/\\/g, '/')}`);
-            }
-        }
-    });
-    return results;
-}
+const galleryImages = galleryFiles.map((file) => getStorageImageUrl(`/images/gallery/${file}`));
 
 export default function Gallery() {
-    const galleryDir = path.join(process.cwd(), 'public', 'images', 'gallery');
-    const images = getImagesRecursively(galleryDir);
-
     return (
         <div className="w-full h-screen flex flex-col justify-center items-center bg-[#FAFAFA]">
             <div className="flex items-center gap-2">
@@ -37,7 +22,7 @@ export default function Gallery() {
             </div>
             <div className="w-full h-full max-h-[80vh] mt-10">
                 <DomeGallery
-                    images={images}
+                    images={galleryImages}
                     fit={0.5}
                     minRadius={800}
                     maxVerticalRotationDeg={0}

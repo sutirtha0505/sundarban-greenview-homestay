@@ -1,3 +1,5 @@
+import { getStorageImageUrl } from "@/lib/supabase/storage";
+
 export type Trip = {
   slug: string;
   image: string;
@@ -40,7 +42,7 @@ export const PRICE_OPTIONS: { id: string; label: string; min: number; max: numbe
 export const tripsData: Trip[] = [
   {
     slug: "sundarban-1-day-1-night",
-    image: "/images/trips/trip1.jpg",
+    image: getStorageImageUrl("/images/trips/trip1.jpg"),
     pillText: "Night on board | One Day, One Night | Sundarban",
     durationText: "Sundarban 1 Day, 1 Night",
     title: "Sundarban Tour: Sajnekhali Bird Sanctuary, Watch Tower, Eco Garden, Hiron Point etc.",
@@ -55,7 +57,7 @@ export const tripsData: Trip[] = [
   },
   {
     slug: "sundarban-2-days-3-nights",
-    image: "/images/trips/trip2.jpg",
+    image: getStorageImageUrl("/images/trips/trip2.jpg"),
     pillText: "Night on board | Two Days, Three Nights | Sundarban",
     durationText: "Sundarban 2 Days, 3 Nights",
     title: "Sundarban Birdwatching & Riverside Relaxation",
@@ -70,7 +72,7 @@ export const tripsData: Trip[] = [
   },
   {
     slug: "sundarban-5-days-7-nights",
-    image: "/images/trips/trip3.jpg",
+    image: getStorageImageUrl("/images/trips/trip3.jpg"),
     pillText: "Night on board | Two Days, Three Nights | Sundarban",
     durationText: "Sundarban 5 Days, 7 Nights",
     title: "Sundarban Wildlife Adventure: Deep Forest Exploration",
@@ -85,7 +87,7 @@ export const tripsData: Trip[] = [
   },
   {
     slug: "sundarban-3-days-4-nights",
-    image: "/images/trips/trip4.jpg",
+    image: getStorageImageUrl("/images/trips/trip4.jpg"),
     pillText: "Mangrove Safari & Trek | 3 Days, 4 Nights | Sundarban",
     durationText: "Sundarban 3 Days, 4 Nights",
     title: "Sundarban Wildlife Trek & Coastal Camping",
@@ -100,7 +102,7 @@ export const tripsData: Trip[] = [
   },
   {
     slug: "sundarban-4-days-5-nights",
-    image: "/images/trips/trip5.jpg",
+    image: getStorageImageUrl("/images/trips/trip5.jpg"),
     pillText: "River Cruise & Culture | 4 Days, 5 Nights | Sundarban",
     durationText: "Sundarban 4 Days, 5 Nights",
     title: "Sundarban River Journey: Village Life & Birdlife",

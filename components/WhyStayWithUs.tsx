@@ -1,13 +1,14 @@
-import Image from "next/image";
+import CachedImage from "./CachedImage";
 import Link from "next/link";
 import SectionHeading from "./SectionHeading";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 const whyStayCards = [
   {
     title: "Riverside Location",
     description:
       "Wake up to river light, mangrove air, and quiet delta mornings right at the water's edge.",
-    image: "/images/Choose/RiversideLocation.jpg",
+    image: getStorageImageUrl("/images/Choose/RiversideLocation.jpg"),
     pill: "On the Matla River",
     href: "/about",
   },
@@ -15,7 +16,7 @@ const whyStayCards = [
     title: "Home-cooked Bengali Meals",
     description:
       "Fresh fish, village produce, and comforting meals made in-house by the family every day.",
-    image: "/images/Choose/HomeCookedBengaliMeals.jpg",
+    image: getStorageImageUrl("/images/Choose/HomeCookedBengaliMeals.jpg"),
     pill: "Farm-to-table freshness",
     href: "/about",
   },
@@ -23,7 +24,7 @@ const whyStayCards = [
     title: "Licensed Forest Guides",
     description:
       "Travel deeper with local experts who know the rhythms of the forest and the tides.",
-    image: "/images/Choose/LicensedForest Guides.jpg",
+    image: getStorageImageUrl("/images/Choose/LicensedForest Guides.jpg"),
     pill: "Govt. certified guides",
     href: "/about",
   },
@@ -31,7 +32,7 @@ const whyStayCards = [
     title: "Family-Run",
     description:
       "Stay with hosts who treat every visitor like part of the home — because that's exactly what you are.",
-    image: "/images/Choose/FamilyRun.jpg",
+    image: getStorageImageUrl("/images/Choose/FamilyRun.jpg"),
     pill: "3 generations of hospitality",
     href: "/about",
   },
@@ -58,7 +59,7 @@ export default function WhyStayWithUs() {
             >
               {/* Image */}
               <div className="relative w-full aspect-4/3 rounded-[24px] overflow-hidden bg-[#F5F5F5]">
-                <Image
+                <CachedImage
                   src={card.image}
                   alt={card.title}
                   fill

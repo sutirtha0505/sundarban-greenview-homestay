@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import CachedImage from "./CachedImage";
 import Link from "next/link";
 import { Gloock } from "next/font/google";
+
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 const gloock = Gloock({
   weight: "400",
@@ -11,16 +13,16 @@ const gloock = Gloock({
 });
 
 const roomImages = [
-  "/images/rooms/image1.jpg",
-  "/images/rooms/image2.jpg",
-  "/images/rooms/image3.jpg",
-  "/images/rooms/image4.jpg",
-  "/images/rooms/image5.jpg",
-  "/images/rooms/image6.jpg",
-  "/images/rooms/image7.jpg",
-  "/images/rooms/image8.jpg",
-  "/images/rooms/image9.jpg",
-  "/images/rooms/image10.jpg",
+  getStorageImageUrl("/images/rooms/image1.jpg"),
+  getStorageImageUrl("/images/rooms/image2.jpg"),
+  getStorageImageUrl("/images/rooms/image3.jpg"),
+  getStorageImageUrl("/images/rooms/image4.jpg"),
+  getStorageImageUrl("/images/rooms/image5.jpg"),
+  getStorageImageUrl("/images/rooms/image6.jpg"),
+  getStorageImageUrl("/images/rooms/image7.jpg"),
+  getStorageImageUrl("/images/rooms/image8.jpg"),
+  getStorageImageUrl("/images/rooms/image9.jpg"),
+  getStorageImageUrl("/images/rooms/image10.jpg"),
 ];
 
 export default function HeroPage() {
@@ -70,7 +72,7 @@ export default function HeroPage() {
     <div id="home" className="relative h-screen w-full overflow-hidden">
       {/* Background Images */}
       {roomImages.map((src, index) => (
-        <Image
+        <CachedImage
           key={src}
           src={src}
           alt={`Sundarban Hero Image ${index + 1}`}
@@ -143,7 +145,7 @@ export default function HeroPage() {
                     className={`relative h-28 w-36 sm:h-32 sm:w-48 shrink-0 overflow-hidden rounded-xl group transition-all duration-300 snap-center ${index === currentImageIndex ? "border-[3px] border-[#C5FE4E]" : "border-[3px] border-transparent"
                     }`}
                 >
-                  <Image
+                  <CachedImage
                     src={src}
                     alt={`Room ${index + 1}`}
                     fill

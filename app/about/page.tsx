@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { Open_Sans, Playfair_Display } from "next/font/google";
 import type { Metadata } from "next";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 export const metadata: Metadata = {
   title: "About Us | Sundarban Greenview Homestay",
@@ -49,7 +50,7 @@ const values = [
       <svg viewBox="0 0 24 24" className="h-6 w-6 stroke-current fill-none stroke-[1.6]">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
         <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M23 21v-2a4 4 0 0 1 0 7.75" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
       </svg>
     ),
@@ -103,7 +104,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
           <div className="relative overflow-hidden">
             <Image
-              src="/images/gallery/image3.jpg"
+              src={getStorageImageUrl("/images/gallery/image3.jpg")}
               alt="Sundarban river view"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -112,7 +113,7 @@ export default function AboutPage() {
           </div>
           <div className="relative overflow-hidden">
             <Image
-              src="/images/gallery/image7.jpg"
+              src={getStorageImageUrl("/images/gallery/image7.jpg")}
               alt="Mangrove forest"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -121,7 +122,7 @@ export default function AboutPage() {
           </div>
           <div className="relative overflow-hidden">
             <Image
-              src="/images/gallery/image5.jpg"
+              src={getStorageImageUrl("/images/gallery/image5.jpg")}
               alt="Sundarban wildlife"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -129,7 +130,7 @@ export default function AboutPage() {
           </div>
           <div className="relative overflow-hidden">
             <Image
-              src="/images/gallery/image14.jpg"
+              src={getStorageImageUrl("/images/gallery/image14.jpg")}
               alt="Homestay exterior"
               fill
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -138,7 +139,7 @@ export default function AboutPage() {
         </div>
 
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0C0000]/90 via-[#0C0000]/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0C0000]/90 via-[#0C0000]/40 to-transparent" />
 
         {/* Hero text */}
         <div className="relative z-10 w-full px-6 pb-16 sm:px-10 lg:px-20 lg:pb-24">
@@ -198,7 +199,7 @@ export default function AboutPage() {
           <div className="relative h-[480px] sm:h-[580px]">
             <div className="absolute left-0 top-0 h-[88%] w-[72%] overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
               <Image
-                src="/images/gallery/image2.jpg"
+                src={getStorageImageUrl("/images/gallery/image2.jpg")}
                 alt="Family at Greenview Homestay"
                 fill
                 className="object-cover"
@@ -206,7 +207,7 @@ export default function AboutPage() {
             </div>
             <div className="absolute bottom-0 right-0 h-[55%] w-[56%] overflow-hidden rounded-[24px] border-4 border-[#FAFAFA] shadow-[0_16px_48px_rgba(0,0,0,0.18)]">
               <Image
-                src="/images/gallery/image6.jpg"
+                src={getStorageImageUrl("/images/gallery/image6.jpg")}
                 alt="Riverside view"
                 fill
                 className="object-cover"
@@ -254,11 +255,11 @@ export default function AboutPage() {
       <section className="overflow-hidden">
         <div className="flex h-[300px] sm:h-[400px]">
           {[
-            "/images/gallery/image1.jpg",
-            "/images/gallery/image4.jpg",
-            "/images/gallery/image8.jpg",
-            "/images/gallery/image13.jpg",
-            "/images/gallery/image19.jpg",
+            getStorageImageUrl("/images/gallery/image1.jpg"),
+            getStorageImageUrl("/images/gallery/image4.jpg"),
+            getStorageImageUrl("/images/gallery/image8.jpg"),
+            getStorageImageUrl("/images/gallery/image13.jpg"),
+            getStorageImageUrl("/images/gallery/image19.jpg"),
           ].map((src, i) => (
             <div key={i} className="relative flex-1 overflow-hidden">
               <Image
@@ -329,13 +330,13 @@ export default function AboutPage() {
           {/* ── MOBILE / TABLET: left-rail road ── */}
           <div className="relative mt-14 lg:hidden">
             {/* Rail line */}
-            <div className="absolute left-[22px] top-0 h-full w-[2px] bg-gradient-to-b from-[#6DA003]/60 via-[#6DA003]/30 to-transparent" />
+            <div className="absolute left-[22px] top-0 h-full w-[2px] bg-linear-to-b from-[#6DA003]/60 via-[#6DA003]/30 to-transparent" />
 
             <div className="flex flex-col gap-0">
               {timeline.map((item, i) => (
                 <div key={item.year} className="relative flex gap-6 pb-12 last:pb-0">
                   {/* Node */}
-                  <div className="relative z-10 flex-shrink-0">
+                  <div className="relative z-10 shrink-0">
                     <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#6DA003] shadow-[0_0_0_4px_rgba(109,160,3,0.18)] shadow-[#6DA003]/30">
                       <span className="text-[13px] font-bold text-white">{String(i + 1).padStart(2, "0")}</span>
                     </div>
@@ -374,7 +375,7 @@ export default function AboutPage() {
           {/* ── DESKTOP: centred two-column spine ── */}
           <div className="relative mt-20 hidden lg:block">
             {/* Spine */}
-            <div className="absolute left-1/2 top-4 h-[calc(100%-2rem)] w-[2px] -translate-x-1/2 bg-gradient-to-b from-[#6DA003]/50 via-[#6DA003]/20 to-transparent" />
+            <div className="absolute left-1/2 top-4 h-[calc(100%-2rem)] w-[2px] -translate-x-1/2 bg-linear-to-b from-[#6DA003]/50 via-[#6DA003]/20 to-transparent" />
 
             <div className="flex flex-col">
               {timeline.map((item, i) => {
@@ -445,7 +446,7 @@ export default function AboutPage() {
             {/* Large image */}
             <div className="relative h-[380px] overflow-hidden lg:h-auto">
               <Image
-                src="/images/gallery/image11.jpg"
+                src={getStorageImageUrl("/images/gallery/image11.jpg")}
                 alt="Sundarban boat safari"
                 fill
                 className="object-cover transition-transform duration-700 hover:scale-105"
@@ -455,7 +456,7 @@ export default function AboutPage() {
             <div className="grid grid-rows-2 gap-[4px]">
               <div className="relative h-[200px] overflow-hidden lg:h-auto">
                 <Image
-                  src="/images/gallery/image9.jpg"
+                  src={getStorageImageUrl("/images/gallery/image9.jpg")}
                   alt="Sundarban birds"
                   fill
                   className="object-cover transition-transform duration-700 hover:scale-105"

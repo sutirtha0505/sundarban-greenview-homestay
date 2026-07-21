@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
+import CachedImage from "./CachedImage";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "./SectionHeading";
+import { getStorageImageUrl } from "@/lib/supabase/storage";
 
 const activities = [
     {
@@ -109,40 +110,40 @@ export default function Activities() {
                 {/* ── RIGHT: Bento Grid ── */}
                 <div className="w-full grid grid-cols-[1fr_1fr_1fr_1fr] grid-rows-[70px_35px_70px] gap-[4px] rounded-2xl overflow-hidden md:w-1/2 md:grid-rows-[80px_40px_80px] lg:grid-rows-[100px_50px_100px] md:gap-[5px] shrink-0">
                     <div className="overflow-hidden col-span-1 rounded-tl-2xl">
-                        <Image src="/images/gallery/image15.jpg" alt="Mangrove river" width={400} height={140} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image15.jpg")} alt="Mangrove river" width={400} height={140} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden">
-                        <Image src="/images/gallery/image17.jpg" alt="Kingfisher bird" width={180} height={285} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image17.jpg")} alt="Kingfisher bird" width={180} height={285} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden">
-                        <Image src="/images/gallery/image16.jpg" alt="Mangrove roots" width={180} height={140} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image16.jpg")} alt="Mangrove roots" width={180} height={140} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden col-span-1 row-span-4 rounded-tr-2xl">
-                        <Image src="/images/gallery/image19.jpg" alt="Aerial view boats" width={180} height={285} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image19.jpg")} alt="Aerial view boats" width={180} height={285} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden col-span-2 row-span-2">
-                        <Image src="/images/gallery/image18.jpg" alt="Mangrove forest path" width={300} height={285} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image18.jpg")} alt="Mangrove forest path" width={300} height={285} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden col-span-1 row-span-3">
-                        <Image src="/images/gallery/image9.jpg" alt="Wooden boat" width={180} height={140} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image9.jpg")} alt="Wooden boat" width={180} height={140} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden row-span-2">
-                        <Image src="/images/gallery/image10.jpg" alt="River view from boat" width={180} height={140} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image10.jpg")} alt="River view from boat" width={180} height={140} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden">
-                        <Image src="/images/gallery/image11.jpg" alt="Aerial greenery" width={360} height={140} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image11.jpg")} alt="Aerial greenery" width={360} height={140} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden rounded-bl-2xl">
-                        <Image src="/images/gallery/image6.jpg" alt="Green river aerial" width={360} height={120} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image6.jpg")} alt="Green river aerial" width={360} height={120} className="w-full h-full object-cover" />
                     </div>
                     <div className="overflow-hidden col-span-2 rounded-br-2xl">
-                        <Image src="/images/gallery/image7.jpg" alt="Open water estuary" width={360} height={120} className="w-full h-full object-cover" />
+                        <CachedImage src={getStorageImageUrl("/images/gallery/image7.jpg")} alt="Open water estuary" width={360} height={120} className="w-full h-full object-cover" />
                     </div>
                 </div>
             </div>
 
-            <Image
-                src="/images/gallery/kingFisher.png"
+            <CachedImage
+                src={getStorageImageUrl("/images/gallery/kingFisher.png")}
                 alt="bg-image"
                 width={300}
                 height={300}
