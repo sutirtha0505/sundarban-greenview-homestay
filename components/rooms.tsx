@@ -123,83 +123,55 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
   const [center, setCenter] = useState(0);
   const animating = useRef(false);
   const n = rooms.length;
-  const timelines = useRef<gsap.core.Timeline[]>([]);
   const hasAnimatedIn = useRef(false);
 
+  const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    timelines.current = [];
-    hasAnimatedIn.current = false;
-  }, [rooms]);
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useGSAP(() => {
     const cards = gsap.utils.toArray<HTMLElement>(".room-arc-card");
-    
-    if (timelines.current.length === 0) {
-      cards.forEach((card) => {
-        const tl = gsap.timeline({ paused: true });
-        tl.to(card, {
-          motionPath: {
-            path: "#arc-path",
-            align: "#arc-path",
-            alignOrigin: [0.5, 0.5],
-            autoRotate: true,
-          },
-          duration: 1,
-          ease: "none"
-        });
-        timelines.current.push(tl);
-      });
-    }
 
     cards.forEach((card, idx) => {
       let diff = idx - center;
       if (diff > n / 2) diff -= n;
       if (diff < -n / 2) diff += n;
       
-      const targetProgress = 0.5 + diff * 0.265; // approx 440px spacing (320px width + 120px gap)
+      const isVisible = Math.abs(diff) <= 1;
+      const xOffset = isMobile ? diff * 240 : diff * 360; 
+      const yOffset = Math.abs(diff) * 45; 
+      const rotation = diff * 5; 
       
-      const tl = timelines.current[idx];
-      if (!tl) return;
+      const targetState = {
+        x: xOffset,
+        y: yOffset,
+        rotation: rotation,
+        scale: isVisible ? (Math.abs(diff) === 0 ? 1 : 0.92) : 0.8,
+        opacity: isVisible ? 1 : 0,
+        zIndex: isVisible ? (Math.abs(diff) === 0 ? 10 : 5) : 1,
+      };
 
       if (!hasAnimatedIn.current) {
-        // Scroll entrance animation
-        gsap.fromTo(tl, { progress: 0 }, {
-          progress: targetProgress,
-          duration: 1.5,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 80%",
-            once: true,
-            toggleActions: "play none none none"
+        gsap.fromTo(card, 
+          { x: xOffset, y: 150, rotation: rotation, scale: 0.8, opacity: 0 }, 
+          {
+            ...targetState,
+            duration: 1.2,
+            ease: "back.out(1.2)",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 80%",
+              once: true,
+            }
           }
-        });
-        gsap.fromTo(card, { opacity: 0, scale: 0.5 }, {
-          opacity: Math.abs(diff) > 1 ? 0 : 1,
-          scale: Math.abs(diff) > 0 ? 0.92 : 1,
-          zIndex: Math.abs(diff) === 0 ? 10 : 5,
-          duration: 1.5,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 80%",
-            once: true,
-            toggleActions: "play none none none"
-          }
-        });
+        );
       } else {
-        // Carousel navigation animation
-        const currentProgress = tl.progress();
-        if (Math.abs(targetProgress - currentProgress) > 0.4) {
-           tl.progress(targetProgress);
-        } else {
-           gsap.to(tl, { progress: targetProgress, duration: 0.6, ease: "power2.out" });
-        }
-        
         gsap.to(card, {
-          opacity: Math.abs(diff) > 1 ? 0 : 1,
-          scale: Math.abs(diff) > 0 ? 0.92 : 1,
-          zIndex: Math.abs(diff) === 0 ? 10 : 5,
+          ...targetState,
           duration: 0.6,
           ease: "power2.out",
         });
@@ -212,12 +184,12 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
         start: "top 80%",
         once: true,
         onEnter: () => {
-          setTimeout(() => { hasAnimatedIn.current = true; }, 1500);
+          setTimeout(() => { hasAnimatedIn.current = true; }, 1200);
         }
       });
     }
 
-  }, { dependencies: [center, rooms], scope: containerRef });
+  }, { dependencies: [center, rooms, isMobile], scope: containerRef });
 
   const navigate = useCallback((dir: "left" | "right") => {
     if (animating.current || !hasAnimatedIn.current) return;
@@ -234,25 +206,18 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
   }, [navigate]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[480px] sm:h-[600px] flex items-center justify-center overflow-hidden sm:overflow-visible">
-      {/* SVG Path for MotionPath */}
-      <svg className="absolute w-full h-[600px] pointer-events-none invisible" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid meet">
-        <path id="arc-path" d="M 0 372 Q 600 228 1200 372" fill="none" stroke="black" />
-      </svg>
-
+    <div ref={containerRef} className="relative w-full h-[680px] sm:h-[600px] flex items-center justify-center overflow-hidden sm:overflow-visible">
       {/* Cards */}
       {rooms.map((room, idx) => {
         let diff = idx - center;
         if (diff > n / 2) diff -= n;
         if (diff < -n / 2) diff += n;
-        // Cards past ±1 are animated to opacity 0 but still sit on the arc — without
-        // this they would swallow clicks meant for the visible cards underneath.
         const isVisible = Math.abs(diff) <= 1;
 
         return (
           <div
             key={room.id}
-            className={`room-arc-card absolute top-0 left-0 w-[280px] sm:w-[320px] origin-center cursor-pointer ${
+            className={`room-arc-card absolute top-1/2 left-1/2 w-[280px] sm:w-[320px] -mt-[190px] -ml-[140px] sm:-ml-[160px] origin-center cursor-pointer ${
               isVisible ? "" : "pointer-events-none"
             }`}
             aria-hidden={!isVisible}
@@ -267,10 +232,10 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
       })}
 
       {/* Navigation Buttons */}
-      <div className="absolute top-[60%] -translate-y-1/2 left-0 sm:-left-4 z-20">
-            <button
-              onClick={() => navigate("right")}
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+      <div className="absolute top-[60%] sm:top-1/2 -translate-y-1/2 left-2 sm:-left-4 z-20">
+        <button
+          onClick={() => navigate("right")}
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
           aria-label="Previous room"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,10 +244,10 @@ function RoomCarousel({ rooms }: { rooms: Room[] }) {
         </button>
       </div>
 
-      <div className="absolute top-[60%] -translate-y-1/2 right-0 sm:-right-4 z-20">
-            <button
-              onClick={() => navigate("left")}
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
+      <div className="absolute top-[60%] sm:top-1/2 -translate-y-1/2 right-2 sm:-right-4 z-20">
+        <button
+          onClick={() => navigate("left")}
+          className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#6DA003] text-[#6DA003] transition-all duration-300 hover:bg-[#6DA003] hover:text-white hover:scale-110 shadow-md bg-[#E1E1E1]"
           aria-label="Next room"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +288,7 @@ const Rooms = () => {
   return (
     <section
       id="rooms"
-      className="relative w-full min-h-screen py-20 pb-[220px] sm:pb-[180px] lg:pb-20 bg-[#E1E1E1] overflow-hidden"
+      className="relative w-full py-20 bg-[#E1E1E1]"
     >
       <div
         className="pointer-events-none absolute -top-20 -left-20 w-72 h-72 rounded-full"

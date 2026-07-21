@@ -1,3 +1,5 @@
+"use client";
+
 import CachedImage from "./CachedImage";
 import { getStorageImageUrl } from "@/lib/supabase/storage";
 
@@ -59,11 +61,15 @@ function Field({
     label,
     type = "text",
     fullWidth = false,
+    name,
+    required = true,
 }: {
     id: string;
     label: string;
     type?: string;
     fullWidth?: boolean;
+    name?: string;
+    required?: boolean;
 }) {
     return (
         <div className={fullWidth ? "col-span-1 sm:col-span-2" : undefined}>
@@ -75,7 +81,9 @@ function Field({
             </label>
             <input
                 id={id}
+                name={name || id}
                 type={type}
+                required={required}
                 className="h-[52px] md:h-[72px] w-full rounded-full bg-white/70 px-[20px] md:px-[24px] text-[15px] md:text-[18px] text-[#222] outline-none"
             />
         </div>
@@ -83,6 +91,24 @@ function Field({
 }
 
 export default function Contact() {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        
+        const name = `${formData.get('firstName') || ''} ${formData.get('lastName') || ''}`.trim();
+        const email = formData.get('email') || '';
+        const phone = formData.get('phone') || '';
+        const userMessage = formData.get('message') || '';
+        
+        const formattedText = `Name: ${name}\nEmail: ${email}\nPh No.: ${phone}\nMessage: ${userMessage}`;
+        
+        const phoneNumber = "917679756846";
+        const message = encodeURIComponent(formattedText);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+        
+        window.open(whatsappUrl, "_blank");
+    };
+
     return (
         <div id="contact" className="min-h-screen w-full bg-[#878787] px-4 py-8 md:px-8 md:py-10 lg:px-[48px] lg:py-[42px] scroll-mt-28">
             <div className="mx-auto flex w-full max-w-[1600px] flex-col-reverse gap-10 lg:flex-row lg:gap-[72px]">
@@ -184,7 +210,7 @@ export default function Contact() {
 
                         {/* Form */}
                         <div className="mt-[34px] border-t border-white/55 pt-[32px]">
-                            <form className="grid grid-cols-1 gap-x-[24px] gap-y-[20px] sm:grid-cols-2">
+                            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-x-[24px] gap-y-[20px] sm:grid-cols-2">
                                 <Field id="firstName" label="First Name" />
                                 <Field id="lastName" label="Last Name" />
                                 <Field id="email" label="E-Mail Address" type="email" fullWidth />
@@ -199,7 +225,9 @@ export default function Contact() {
                                     </label>
                                     <textarea
                                         id="message"
+                                        name="message"
                                         rows={4}
+                                        required
                                         className="h-[120px] md:h-[150px] w-full resize-none rounded-[28px] bg-white/70 px-[20px] md:px-[24px] py-[14px] md:py-[18px] text-[15px] md:text-[18px] text-[#222] outline-none"
                                     />
                                 </div>
