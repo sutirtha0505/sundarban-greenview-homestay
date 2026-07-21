@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌿 Sundarban Greenview Homestay
 
-## Getting Started
+A modern, high-performance, dynamic web application and admin portal for **Sundarban Greenview Homestay**, designed to showcase luxury homestay accommodations, curated Sundarban tour packages, a 3D photo gallery, and interactive customer reviews.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+- ** dynamic Hero Carousel & Content**: Admin-configurable title, subtitle, CTA button links, and multi-image background carousels stored in Supabase.
+- ** 3D Interactive Photo Gallery**: Directly synced with Supabase Storage (`images/gallery/`) featuring drag & click preview modes.
+- ** Dynamic Rooms & Bookings**: Browse Budget and Premium rooms fetched from Supabase DB with automated WhatsApp booking integration.
+- ** Curated Sundarban Tour Packages**: 1-Day, 2-Day, and 3-Day tour packages with detailed inclusions, exclusions, and custom trip booking.
+- ** Dynamic Customer Reviews**:
+  - Live customer reviews carousel with dynamic 1-5 star rating displays.
+  - Interactive "Write a Review" modal with landscape photo validation and direct upload to Supabase Storage.
+  - Admin panel control to toggle homepage visibility (`show_in_home`).
+- ** Secured Admin Dashboard (`/admin`)**:
+  - Supabase Email & Password Authentication.
+  - Admin verification via `admin_users` table and default admin override.
+  - Tabbed management for Rooms, Tour Packages, Hero Section, Gallery, and Reviews.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Animations**: [GSAP](https://greensock.com/gsap/) (MotionPathPlugin, ScrollTrigger, `@gsap/react`)
+- **Backend & Database**: [Supabase](https://supabase.com/) (PostgreSQL & Storage Buckets)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Utilities**: `react-dropzone`, `canvas-confetti`
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ or 20+
+- npm, pnpm, yarn, or bun
+
+### 1. Clone & Install Dependencies
+
+```bash
+git clone https://github.com/your-username/sundarban-greenview-homestay.git
+cd sundarban-greenview-homestay
+npm install
+```
+
+### 2. Configure Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://fupyposiegpynmgndboz.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗄️ Database Setup (Supabase SQL)
 
-## Learn More
+To set up the database tables and storage policies, execute the SQL migration scripts in your Supabase SQL Editor:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Reviews Table**: `supabase_reviews.sql`
+   - Creates `public.reviews` table (`id`, `name`, `text`, `rating`, `image`, `show_in_home`, `created_at`).
+   - Configures RLS policies for public select/insert and authenticated admin access.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Storage Bucket**:
+   - Bucket Name: `green_view_home_stay` (Public access enabled).
+   - Folders: `rooms/`, `trips/`, `hero/`, `images/gallery/`, `images/reviews/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📜 Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` — Starts Next.js development server with Turbopack.
+- `npm run build` — Builds optimized production bundle.
+- `npm run start` — Starts production server.
+- `npm run lint` — Runs Next.js linter checks.
+- `npx tsc --noEmit` — Validates TypeScript types across the project.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔒 Admin Access
+
+Access the Admin Dashboard at [`/admin`](http://localhost:3000/admin) to manage rooms, tour packages, hero section content, gallery images, and customer reviews.
