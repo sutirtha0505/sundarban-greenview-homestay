@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import { getStorageImageUrl, STORAGE_BUCKET } from "@/lib/supabase/storage";
+import { fetchLiveHeroData, defaultHeroData, type HeroData } from "@/lib/data/hero";
+import type { User, Session } from "@supabase/supabase-js";
 import {
   Mail,
   KeyRound,
@@ -12,6 +14,7 @@ import {
   PlusCircle,
   BedDouble,
   Compass,
+  Sparkles,
   Upload,
   CheckCircle2,
   AlertCircle,
@@ -22,17 +25,42 @@ import {
   ShieldCheck,
   UserPlus,
   Lock,
+  Images,
 } from "lucide-react";
+import {
+  fetchLiveGalleryImages,
+  uploadGalleryImagesToStorage,
+  deleteGalleryImageFromStorage,
+  type GalleryItem,
+} from "@/lib/data/gallery";
 
 type RoomTier = "budget" | "premium";
 type DurationBand = "1N" | "2N" | "3N+";
 type GroupType = "group" | "private";
 
+interface RoomRecord {
+  id: string;
+  title: string;
+  slug: string;
+  hero_image: string;
+  tier: string;
+  price_per_night: number;
+}
+
+interface TripRecord {
+  id: string;
+  title: string;
+  slug: string;
+  hero_image: string;
+  duration_band: string;
+  price_display: string;
+}
+
 const DEFAULT_ADMIN_EMAIL = "tirtharajkarmakarinlinux@gmail.com";
 
 export default function AdminPage() {
   // Auth state
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
@@ -43,7 +71,7 @@ export default function AdminPage() {
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState<"rooms" | "trips">("rooms");
+  const [activeTab, setActiveTab] = useState<"rooms" | "trips" | "hero" | "gallery">("rooms");
 
   // Feedback notifications
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -56,7 +84,7 @@ export default function AdminPage() {
   // --------------------------------------------------------------------------
   // Rooms State & Operations
   // --------------------------------------------------------------------------
-  const [roomsList, setRoomsList] = useState<any[]>([]);
+  const [roomsList, setRoomsList] = useState<RoomRecord[]>([]);
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [uploadingRoomImage, setUploadingRoomImage] = useState(false);
 
@@ -83,7 +111,7 @@ export default function AdminPage() {
   // --------------------------------------------------------------------------
   // Trips State & Operations
   // --------------------------------------------------------------------------
-  const [tripsList, setTripsList] = useState<any[]>([]);
+  const [tripsList, setTripsList] = useState<TripRecord[]>([]);
   const [loadingTrips, setLoadingTrips] = useState(false);
   const [uploadingTripImage, setUploadingTripImage] = useState(false);
 
@@ -110,9 +138,77 @@ export default function AdminPage() {
   const [submittingTrip, setSubmittingTrip] = useState(false);
 
   // --------------------------------------------------------------------------
+  // Hero Section State & Operations
+  // --------------------------------------------------------------------------
+  const [heroForm, setHeroForm] = useState<HeroData>(defaultHeroData);
+  const [loadingHero, setLoadingHero] = useState(false);
+  const [submittingHero, setSubmittingHero] = useState(false);
+  const [uploadingHeroImage, setUploadingHeroImage] = useState(false);
+  const [newHeroImageUrl, setNewHeroImageUrl] = useState("");
+
+  const fetchHeroContent = useCallback(async () => {
+    setLoadingHero(true);
+    try {
+      const data = await fetchLiveHeroData();
+      setHeroForm(data);
+    } catch (err: unknown) {
+      console.error("Error fetching live hero data:", err);
+    } finally {
+      setLoadingHero(false);
+    }
+  }, []);
+
+  // --------------------------------------------------------------------------
+  // Gallery State & Operations
+  // --------------------------------------------------------------------------
+  const [galleryList, setGalleryList] = useState<GalleryItem[]>([]);
+  const [loadingGallery, setLoadingGallery] = useState(false);
+  const [uploadingGalleryImages, setUploadingGalleryImages] = useState(false);
+
+  const fetchGallery = useCallback(async () => {
+    setLoadingGallery(true);
+    try {
+      const items = await fetchLiveGalleryImages();
+      setGalleryList(items);
+    } catch (err: unknown) {
+      console.error("Error fetching live gallery images:", err);
+    } finally {
+      setLoadingGallery(false);
+    }
+  }, []);
+
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingGalleryImages(true);
+
+    try {
+      const fileArray = Array.from(files);
+      await uploadGalleryImagesToStorage(fileArray);
+      showToast(`${fileArray.length} gallery image(s) uploaded to Supabase Storage!`);
+      fetchGallery();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to upload gallery images", "error");
+    } finally {
+      setUploadingGalleryImages(false);
+    }
+  };
+
+  const handleDeleteGalleryImage = async (fileName: string) => {
+    if (!confirm(`Are you sure you want to delete ${fileName} from Supabase Storage?`)) return;
+    try {
+      await deleteGalleryImageFromStorage(fileName);
+      showToast("Gallery image deleted from Supabase Storage!");
+      fetchGallery();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to delete gallery image", "error");
+    }
+  };
+
+  // --------------------------------------------------------------------------
   // Admin Verification Logic
   // --------------------------------------------------------------------------
-  const verifyAdminStatus = useCallback(async (user: any) => {
+  const verifyAdminStatus = useCallback(async (user: User | null) => {
     if (!user) {
       setIsAdmin(false);
       return false;
@@ -191,6 +287,8 @@ export default function AdminPage() {
           setSession(session);
           fetchRooms();
           fetchTrips();
+          fetchHeroContent();
+          fetchGallery();
         }
       } else {
         setSession(null);
@@ -207,6 +305,8 @@ export default function AdminPage() {
           setSession(session);
           fetchRooms();
           fetchTrips();
+          fetchHeroContent();
+          fetchGallery();
         }
       } else {
         setSession(null);
@@ -215,7 +315,7 @@ export default function AdminPage() {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchRooms, fetchTrips, verifyAdminStatus]);
+  }, [fetchRooms, fetchTrips, fetchHeroContent, fetchGallery, verifyAdminStatus]);
 
   // Handle Sign In / Sign Up Form Submission
   const handleAuthSubmit = async (e: React.FormEvent) => {
@@ -275,8 +375,8 @@ export default function AdminPage() {
           }
         }
       }
-    } catch (err: any) {
-      setAuthError(err.message || "Authentication failed");
+    } catch (err: unknown) {
+      setAuthError((err as Error).message || "Authentication failed");
     } finally {
       setIsSubmittingAuth(false);
     }
@@ -351,8 +451,8 @@ export default function AdminPage() {
       const path = await uploadImageToStorage(files[0], "rooms");
       setRoomForm((prev) => ({ ...prev, hero_image: path }));
       showToast("Room hero image uploaded successfully!");
-    } catch (err: any) {
-      showToast(err.message || "Failed to upload image", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to upload image", "error");
     } finally {
       setUploadingRoomImage(false);
     }
@@ -367,10 +467,96 @@ export default function AdminPage() {
       const path = await uploadImageToStorage(files[0], "trips");
       setTripForm((prev) => ({ ...prev, hero_image: path }));
       showToast("Trip hero image uploaded successfully!");
-    } catch (err: any) {
-      showToast(err.message || "Failed to upload image", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to upload image", "error");
     } finally {
       setUploadingTripImage(false);
+    }
+  };
+
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploadingHeroImage(true);
+
+    try {
+      const fileArray = Array.from(files);
+      const uploadedPaths = await Promise.all(
+        fileArray.map((file) => uploadImageToStorage(file, "hero"))
+      );
+
+      setHeroForm((prev) => ({
+        ...prev,
+        images: [...(prev.images || []), ...uploadedPaths],
+      }));
+      showToast(`${uploadedPaths.length} image(s) uploaded to Supabase Storage!`);
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to upload hero images", "error");
+    } finally {
+      setUploadingHeroImage(false);
+    }
+  };
+
+  const handleAddHeroImageUrl = () => {
+    if (!newHeroImageUrl.trim()) return;
+    setHeroForm((prev) => ({
+      ...prev,
+      images: [...(prev.images || []), newHeroImageUrl.trim()],
+    }));
+    setNewHeroImageUrl("");
+    showToast("Hero image URL added!");
+  };
+
+  const handleRemoveHeroImage = (indexToRemove: number) => {
+    setHeroForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, idx) => idx !== indexToRemove),
+    }));
+  };
+
+  const handleSaveHero = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!heroForm.title || !heroForm.subtitle) {
+      showToast("Please enter both Title and Subtitle", "error");
+      return;
+    }
+
+    setSubmittingHero(true);
+    try {
+      const payload = {
+        title: heroForm.title,
+        subtitle: heroForm.subtitle,
+        button_text: heroForm.buttonText,
+        button_link: heroForm.buttonLink,
+        images: heroForm.images,
+        is_active: true,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (heroForm.id) {
+        const { error } = await supabase
+          .from("hero_content")
+          .update(payload)
+          .eq("id", heroForm.id);
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase
+          .from("hero_content")
+          .insert([payload])
+          .select()
+          .single();
+        if (error) throw error;
+        if (data) {
+          setHeroForm((prev) => ({ ...prev, id: data.id }));
+        }
+      }
+
+      showToast("Hero section updated successfully in Supabase!");
+      fetchHeroContent();
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to update hero section", "error");
+    } finally {
+      setSubmittingHero(false);
     }
   };
 
@@ -431,8 +617,8 @@ export default function AdminPage() {
         has_mosquito_net: true,
       });
       fetchRooms();
-    } catch (err: any) {
-      showToast(err.message || "Failed to add room", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to add room", "error");
     } finally {
       setSubmittingRoom(false);
     }
@@ -446,8 +632,8 @@ export default function AdminPage() {
       if (error) throw error;
       showToast("Room deleted");
       fetchRooms();
-    } catch (err: any) {
-      showToast(err.message || "Failed to delete room", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to delete room", "error");
     }
   };
 
@@ -539,8 +725,8 @@ export default function AdminPage() {
         exclusionsInput: "GST, Forest permit, Pickup/drop, Personal expenses",
       });
       fetchTrips();
-    } catch (err: any) {
-      showToast(err.message || "Failed to add package", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to add package", "error");
     } finally {
       setSubmittingTrip(false);
     }
@@ -554,8 +740,8 @@ export default function AdminPage() {
       if (error) throw error;
       showToast("Package deleted");
       fetchTrips();
-    } catch (err: any) {
-      showToast(err.message || "Failed to delete package", "error");
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Failed to delete package", "error");
     }
   };
 
@@ -681,7 +867,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={isSubmittingAuth}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6DA003] to-[#4E7502] py-3.5 font-semibold text-white shadow-[0_8px_25px_rgba(109,160,3,0.3)] transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#6DA003] to-[#4E7502] py-3.5 font-semibold text-white shadow-[0_8px_25px_rgba(109,160,3,0.3)] transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
             >
               {isSubmittingAuth ? (
                 <>
@@ -792,6 +978,28 @@ export default function AdminPage() {
           >
             <Compass className="h-5 w-5" />
             <span>Manage Tour Packages ({tripsList.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("hero")}
+            className={`flex items-center gap-2.5 border-b-2 px-6 py-4 text-sm font-semibold transition ${
+              activeTab === "hero"
+                ? "border-[#C5FE4E] text-[#C5FE4E]"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <Sparkles className="h-5 w-5" />
+            <span>Manage Hero Section</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("gallery")}
+            className={`flex items-center gap-2.5 border-b-2 px-6 py-4 text-sm font-semibold transition ${
+              activeTab === "gallery"
+                ? "border-[#C5FE4E] text-[#C5FE4E]"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <Images className="h-5 w-5" />
+            <span>Manage Gallery ({galleryList.length})</span>
           </button>
         </div>
 
@@ -1009,7 +1217,7 @@ export default function AdminPage() {
                         >
                           <input
                             type="checkbox"
-                            checked={(roomForm as any)[item.key]}
+                            checked={Boolean(roomForm[item.key as keyof typeof roomForm])}
                             onChange={(e) =>
                               setRoomForm((p) => ({ ...p, [item.key]: e.target.checked }))
                             }
@@ -1024,7 +1232,7 @@ export default function AdminPage() {
                   <button
                     type="submit"
                     disabled={submittingRoom}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
                   >
                     {submittingRoom ? (
                       <>
@@ -1356,7 +1564,7 @@ export default function AdminPage() {
                   <button
                     type="submit"
                     disabled={submittingTrip}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
                   >
                     {submittingTrip ? (
                       <>
@@ -1422,6 +1630,268 @@ export default function AdminPage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: HERO SECTION MANAGEMENT */}
+        {activeTab === "hero" && (
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+            <div className="lg:col-span-12">
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="h-6 w-6 text-[#C5FE4E]" />
+                    <h2 className="text-xl font-bold text-white">Manage Hero Section & Storage Images</h2>
+                  </div>
+                  <button
+                    onClick={fetchHeroContent}
+                    className="flex items-center gap-1 text-xs text-[#C5FE4E] hover:underline"
+                  >
+                    Reload Live Data
+                  </button>
+                </div>
+
+                {loadingHero ? (
+                  <div className="flex justify-center py-10">
+                    <Loader2 className="h-8 w-8 animate-spin text-[#C5FE4E]" />
+                  </div>
+                ) : (
+                  <form onSubmit={handleSaveHero} className="space-y-6">
+                    <div>
+                      <label className="mb-2 block text-xs font-semibold uppercase text-gray-300">
+                        Hero Main Title (HTML supported for highlighted text) *
+                      </label>
+                      <input
+                        type="text"
+                        value={heroForm.title}
+                        onChange={(e) => setHeroForm((p) => ({ ...p, title: e.target.value }))}
+                        placeholder='Escape. <span class="text-[#C5FE4E]">Relax.</span> Mangroves.'
+                        className="w-full rounded-xl border border-white/10 bg-white/5 p-3.5 text-sm text-white outline-none focus:border-[#C5FE4E]"
+                      />
+                      <p className="mt-1 text-xs text-gray-400">
+                        Tip: Use &lt;span class=&quot;text-[#C5FE4E]&quot;&gt;Word&lt;/span&gt; to highlight words in neon green.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-xs font-semibold uppercase text-gray-300">
+                        Hero Description / Subtitle Paragraph *
+                      </label>
+                      <textarea
+                        rows={5}
+                        value={heroForm.subtitle}
+                        onChange={(e) => setHeroForm((p) => ({ ...p, subtitle: e.target.value }))}
+                        placeholder="Escape into the untouched wilderness of the Sundarbans..."
+                        className="w-full rounded-xl border border-white/10 bg-white/5 p-3.5 text-sm text-white outline-none focus:border-[#C5FE4E]"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-2 block text-xs font-semibold uppercase text-gray-300">
+                          CTA Button Text
+                        </label>
+                        <input
+                          type="text"
+                          value={heroForm.buttonText}
+                          onChange={(e) => setHeroForm((p) => ({ ...p, buttonText: e.target.value }))}
+                          placeholder="Book your Trip"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-[#C5FE4E]"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-xs font-semibold uppercase text-gray-300">
+                          CTA Button Target Link
+                        </label>
+                        <input
+                          type="text"
+                          value={heroForm.buttonLink}
+                          onChange={(e) => setHeroForm((p) => ({ ...p, buttonLink: e.target.value }))}
+                          placeholder="/booking"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-[#C5FE4E]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Hero Carousel Images */}
+                    <div>
+                      <label className="mb-2 block text-xs font-semibold uppercase text-gray-300">
+                        Hero Background Carousel Images (Upload directly to Supabase Storage)
+                      </label>
+
+                      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-[#C5FE4E]/50 bg-[#6DA003]/10 px-5 py-3 text-xs font-semibold text-[#C5FE4E] transition hover:bg-[#6DA003]/20">
+                          {uploadingHeroImage ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>Uploading Images to Storage...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4" />
+                              <span>Upload Multiple Image Files</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleHeroImageUpload}
+                            disabled={uploadingHeroImage}
+                            className="hidden"
+                          />
+                        </label>
+
+                        <span className="text-xs text-gray-400">or Public Storage URL:</span>
+                        <input
+                          type="text"
+                          value={newHeroImageUrl}
+                          onChange={(e) => setNewHeroImageUrl(e.target.value)}
+                          placeholder="https://...supabase.co/storage/v1/object/public/..."
+                          className="flex-1 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-[#C5FE4E]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddHeroImageUrl}
+                          className="rounded-xl border border-[#C5FE4E]/40 bg-[#C5FE4E]/10 px-4 py-3 text-xs font-semibold text-[#C5FE4E] hover:bg-[#C5FE4E]/20"
+                        >
+                          Add URL
+                        </button>
+                      </div>
+
+                      {/* Image Thumbnails Grid */}
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+                        {heroForm.images.map((src, index) => (
+                          <div
+                            key={`${src}-${index}`}
+                            className="group relative h-28 overflow-hidden rounded-2xl border border-white/10 bg-black/40"
+                          >
+                            <Image
+                              src={getStorageImageUrl(src)}
+                              alt={`Hero Carousel Image ${index + 1}`}
+                              fill
+                              className="object-cover transition group-hover:scale-105"
+                              unoptimized
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveHeroImage(index)}
+                              className="absolute top-2 right-2 rounded-full bg-red-500/80 p-1.5 text-white transition hover:bg-red-600"
+                              title="Remove image"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                            <span className="absolute bottom-1 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] text-white">
+                              #{index + 1}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submittingHero}
+                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r from-[#6DA003] to-[#4E7502] py-4 font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.99] disabled:opacity-50"
+                    >
+                      {submittingHero ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span>Updating Hero Section in Supabase...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-5 w-5" />
+                          <span>Save Hero Section Changes</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: GALLERY MANAGEMENT */}
+        {activeTab === "gallery" && (
+          <div className="flex flex-col gap-8">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl sm:p-8">
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Images className="h-5 w-5 text-[#C5FE4E]" />
+                    <span>Supabase Storage Gallery Images</span>
+                  </h2>
+                  <p className="mt-1 text-xs text-gray-400">
+                    Bucket Path: <code className="text-[#C5FE4E]">green_view_home_stay/images/gallery/</code>
+                  </p>
+                </div>
+
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-[#C5FE4E]/50 bg-[#6DA003]/10 px-5 py-3 text-xs font-semibold text-[#C5FE4E] transition hover:bg-[#6DA003]/20">
+                  {uploadingGalleryImages ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Uploading to Supabase Storage...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4" />
+                      <span>Upload Multiple Gallery Images</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryUpload}
+                    disabled={uploadingGalleryImages}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {loadingGallery ? (
+                <div className="flex py-16 justify-center items-center text-[#C5FE4E]">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : galleryList.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-sm text-gray-400">
+                  No images found in Supabase Storage <code className="text-[#C5FE4E]">images/gallery/</code>.
+                  Upload your first batch above!
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {galleryList.map((item) => (
+                    <div
+                      key={item.name}
+                      className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-2 transition hover:border-[#C5FE4E]/50"
+                    >
+                      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-black/40">
+                        <Image
+                          src={item.url}
+                          alt={item.name}
+                          fill
+                          className="object-cover transition duration-300 group-hover:scale-105"
+                          unoptimized
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteGalleryImage(item.name)}
+                          className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-600/90 text-white shadow-lg backdrop-blur-md transition hover:bg-red-500 hover:scale-110"
+                          title="Delete image from Supabase Storage"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <div className="mt-2 truncate px-1 text-[11px] font-medium text-gray-300">
+                        {item.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

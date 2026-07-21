@@ -72,7 +72,10 @@ export default function TripsFilterGrid({ trips: initialTrips }: { trips?: Trip[
     });
   }, []);
 
-  const tripsToUse = liveTrips.length > 0 ? liveTrips : (initialTrips || []);
+  const tripsToUse = useMemo(
+    () => (liveTrips.length > 0 ? liveTrips : initialTrips || []),
+    [liveTrips, initialTrips]
+  );
 
   const activeCount = durations.length + priceBands.length + groupTypes.length;
 
@@ -148,7 +151,7 @@ export default function TripsFilterGrid({ trips: initialTrips }: { trips?: Trip[
               key={trip.slug}
               className="flex h-full flex-col overflow-hidden rounded-[32px] border border-[#6DA003]/20 bg-white shadow-[0_12px_40px_rgba(109,160,3,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_rgba(109,160,3,0.14)]"
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-4/3 overflow-hidden">
                 <Image
                   src={trip.image}
                   alt={trip.title}
