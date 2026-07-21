@@ -266,7 +266,7 @@ export default function RoomsFilterGrid({ rooms }: { rooms: Room[] }) {
                   key={room.slug}
                   className="flex h-full flex-col overflow-hidden rounded-[32px] border border-[#6DA003]/20 bg-white shadow-[0_12px_40px_rgba(109,160,3,0.08)] transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_16px_50px_rgba(109,160,3,0.14)]"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-4/3 overflow-hidden">
                     <Image
                       src={room.image}
                       alt={room.title}

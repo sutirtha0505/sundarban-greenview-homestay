@@ -117,25 +117,25 @@ export default function Contact() {
 
                                 {/* Social icons */}
                                 <div className="mt-[34px] flex items-center justify-center gap-[22px] text-[#4F4039]">
-                                    <a href="#" aria-label="Facebook">
+                                    <a href="https://www.facebook.com/profile.php?id=100089300530104" aria-label="Facebook">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-9 w-9">
                                             <path d="M17 2h-3a5 5 0 0 0-5 5v3H6v4h3v8h4v-8h3.2l.8-4H13V7a1 1 0 0 1 1-1h3V2Z" />
                                         </svg>
                                     </a>
-                                    <a href="#" aria-label="Instagram">
+                                    <a href="https://www.instagram.com/sundarban_green_view_homestay_" aria-label="Instagram">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-9 w-9">
                                             <rect x="3" y="3" width="18" height="18" rx="5" />
                                             <circle cx="12" cy="12" r="4.2" />
                                             <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
                                         </svg>
                                     </a>
-                                    <a href="#" aria-label="YouTube">
+                                    <a href="https://www.youtube.com/@bideshmondal9714" aria-label="YouTube">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-9 w-9">
                                             <rect x="3" y="6" width="18" height="12" rx="4" />
                                             <path d="M10 9.5 15 12l-5 2.5v-5Z" fill="currentColor" stroke="none" />
                                         </svg>
                                     </a>
-                                    <a href="#" aria-label="WhatsApp">
+                                    <a href="https://api.whatsapp.com/send?phone=917679756846&text=Hello" aria-label="WhatsApp">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-9 w-9">
                                             <path d="M20.5 12a8.5 8.5 0 0 1-12.9 7.3L4 20l.8-3.4A8.5 8.5 0 1 1 20.5 12Z" />
                                             <path d="M9.2 8.7c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.8 2c.1.3.1.5-.1.7l-.6.8c.5 1 1.3 1.8 2.3 2.3l.8-.6c.2-.2.4-.2.7-.1l2 .8c.3.1.4.3.4.5v.5c0 .3 0 .5-.4.7-.7.5-1.5.8-2.3.8-3.6 0-6.6-3-6.6-6.6 0-.8.3-1.6.8-2.3Z" />

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import SectionHeading from "./SectionHeading";
 
 export default function SocialMedia() {
@@ -11,21 +10,24 @@ export default function SocialMedia() {
                 <div className="w-full rounded-2xl overflow-hidden md:w-1/2">
                     <iframe
                         className="w-full min-h-[240px] md:min-h-[400px] lg:min-h-[500px]"
-                        src="https://www.youtube.com/embed/1L0aiF4-gUU?si=fZ-0P_K_xnP7A3Q1"
+                        src="https://www.youtube.com/embed/cwsdTKoGv5U?si=BgyG-sKL-ifz_Upp"
                         title="YouTube video player"
+                        frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerPolicy="strict-origin-when-cross-origin"
                         allowFullScreen
                     ></iframe>
                 </div>
                 <div className="relative w-full rounded-2xl overflow-hidden min-h-[280px] md:min-h-[400px] lg:min-h-[500px] md:w-1/2">
-                    <Image
-                        src="/images/social/image2.png"
-                        alt="Social Media"
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover"
-                    />
+                    <iframe
+                        className="w-full min-h-[240px] md:min-h-[400px] lg:min-h-[500px]"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4051.733266196112!2d88.83728459999999!3d22.139594900000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0189f8a4923665%3A0xe956aa844bede1de!2sSUNDARBAN%20GREEN%20VIEW%20HOMESTAY!5e1!3m2!1sen!2sin!4v1784606481109!5m2!1sen!2sin"
+                        title="Google Maps"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                    ></iframe>
                 </div>
             </div>
         </div>
