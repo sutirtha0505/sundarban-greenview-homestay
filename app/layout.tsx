@@ -98,6 +98,11 @@ export const metadata: Metadata = {
     },
   },
   category: "Travel & Tourism",
+  icons: {
+    icon: "/images/icons/android-chrome-512x512.png",
+    shortcut: "/images/icons/android-chrome-512x512.png",
+    apple: "/images/icons/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
